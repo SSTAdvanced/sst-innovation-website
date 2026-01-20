@@ -1,6 +1,8 @@
 ﻿"use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useI18n } from "@/lib/i18n";
+import { getSupabaseClient } from "@/lib/supabaseClient";
 
 type FormState = {
   name: string;
@@ -18,6 +20,7 @@ type SubmitState = {
 };
 
 export default function ContactForm() {
+  const { t } = useI18n();
   const [form, setForm] = useState<FormState>({
     name: "",
     phone: "",
@@ -31,6 +34,10 @@ export default function ContactForm() {
     error: ""
   });
 
+  const hasEnv = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = event.target;
     const field = id as keyof FormState;
@@ -41,9 +48,9 @@ export default function ContactForm() {
     event.preventDefault();
     const nextErrors: FormErrors = {};
 
-    if (!form.name.trim()) nextErrors.name = "กรุณากรอกชื่อ-นามสกุล";
-    if (!form.phone.trim()) nextErrors.phone = "กรุณากรอกเบอร์โทรศัพท์";
-    if (!form.email.trim()) nextErrors.email = "กรุณากรอกอีเมล";
+    if (!form.name.trim()) nextErrors.name = t.contact.form.requiredMessages.name;
+    if (!form.phone.trim()) nextErrors.phone = t.contact.form.requiredMessages.phone;
+    if (!form.email.trim()) nextErrors.email = t.contact.form.requiredMessages.email;
 
     setErrors(nextErrors);
     setSubmitState({ loading: false, success: "", error: "" });
@@ -52,97 +59,105 @@ export default function ContactForm() {
       return;
     }
 
+    if (!hasEnv) {
+      setSubmitState({ loading: false, success: "", error: t.contact.form.envMissingMessage });
+      return;
+    }
+
     setSubmitState({ loading: true, success: "", error: "" });
 
     try {
-      const response = await fetch("/api/leads", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+      const supabase = getSupabaseClient();
+      const { error } = await supabase.from("leads").insert([
+        {
           name: form.name,
           phone: form.phone,
           email: form.email,
           message: form.message
-        })
-      });
+        }
+      ]);
 
-      const result = (await response.json()) as { ok: boolean; error?: string };
-
-      if (!response.ok || !result.ok) {
-        throw new Error(result.error || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      if (error) {
+        throw new Error(error.message);
       }
 
       setForm({ name: "", phone: "", email: "", message: "" });
-      setSubmitState({ loading: false, success: "ส่งข้อมูลสำเร็จแล้ว", error: "" });
+      setSubmitState({ loading: false, success: t.contact.form.successMessage, error: "" });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "เกิดข้อผิดพลาด";
+      const message = error instanceof Error ? error.message : t.contact.form.errorMessage;
       setSubmitState({ loading: false, success: "", error: message });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-6 text-gray-800">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+    <form onSubmit={handleSubmit} className="rounded-2xl bg-white/95 p-6 text-gray-800 shadow-xl">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <label htmlFor="name" className="block mb-2 font-medium">ชื่อ-นามสกุล</label>
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700">
+            {t.contact.form.labels.name}
+          </label>
           <input
             type="text"
             id="name"
             value={form.name}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {errors.name ? <p className="text-sm text-red-600 mt-2">{errors.name}</p> : null}
+          {errors.name ? <p className="mt-2 text-xs text-red-600">{errors.name}</p> : null}
         </div>
         <div>
-          <label htmlFor="phone" className="block mb-2 font-medium">เบอร์โทรศัพท์</label>
+          <label htmlFor="phone" className="block text-sm font-medium text-slate-700">
+            {t.contact.form.labels.phone}
+          </label>
           <input
             type="tel"
             id="phone"
             value={form.phone}
             onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {errors.phone ? <p className="text-sm text-red-600 mt-2">{errors.phone}</p> : null}
+          {errors.phone ? <p className="mt-2 text-xs text-red-600">{errors.phone}</p> : null}
         </div>
       </div>
-      <div className="mb-6">
-        <label htmlFor="email" className="block mb-2 font-medium">อีเมล</label>
+      <div className="mt-6">
+        <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+          {t.contact.form.labels.email}
+        </label>
         <input
           type="email"
           id="email"
           value={form.email}
           onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        {errors.email ? <p className="text-sm text-red-600 mt-2">{errors.email}</p> : null}
+        {errors.email ? <p className="mt-2 text-xs text-red-600">{errors.email}</p> : null}
       </div>
-      <div className="mb-6">
-        <label htmlFor="message" className="block mb-2 font-medium">รายละเอียดที่ต้องการ</label>
+      <div className="mt-6">
+        <label htmlFor="message" className="block text-sm font-medium text-slate-700">
+          {t.contact.form.labels.message}
+        </label>
         <textarea
           id="message"
           rows={4}
           value={form.message}
           onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       {submitState.success ? (
-        <p className="text-sm text-green-600 mb-4">{submitState.success}</p>
+        <p className="mt-4 text-sm text-emerald-600">{submitState.success}</p>
       ) : null}
       {submitState.error ? (
-        <p className="text-sm text-red-600 mb-4">{submitState.error}</p>
+        <p className="mt-4 text-sm text-rose-600">{submitState.error}</p>
       ) : null}
 
       <button
         type="submit"
         disabled={submitState.loading}
-        className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+        className="mt-6 w-full rounded-full bg-blue-600 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {submitState.loading ? "กำลังส่งข้อมูล..." : "ส่งข้อมูล"}
+        {submitState.loading ? t.contact.form.submittingLabel : t.contact.form.submitLabel}
       </button>
     </form>
   );

@@ -1,5 +1,5 @@
 ﻿import { CheckCircle } from "lucide-react";
-import type { Package } from "@/lib/constants";
+import type { PackageItem } from "@/lib/content";
 
 export default function PackageCard({
   title,
@@ -8,24 +8,24 @@ export default function PackageCard({
   discount,
   features,
   highlight
-}: Package) {
+}: PackageItem) {
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-6 relative">
+    <div className="relative rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       {highlight ? (
-        <span className="absolute -top-3 right-4 bg-blue-600 text-white text-xs px-3 py-1 rounded-full font-semibold">
+        <span className="absolute -top-3 right-4 rounded-full bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
           {highlight}
         </span>
       ) : null}
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <div className="flex items-baseline gap-2 mb-2">
-        <span className="text-3xl font-bold text-blue-600">{price}</span>
-        <span className="text-sm text-gray-500 line-through">{original}</span>
+      <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
+      <div className="mt-3 flex items-baseline gap-2">
+        <span className="text-3xl font-semibold text-blue-600">{price}</span>
+        <span className="text-sm text-slate-400 line-through">{original}</span>
       </div>
-      <p className="text-sm text-green-600 font-semibold mb-4">ลด {discount}</p>
-      <ul className="space-y-2 text-gray-700">
+      <p className="mt-1 text-sm font-semibold text-emerald-600">ลด {discount}</p>
+      <ul className="mt-4 space-y-2 text-sm text-slate-700">
         {features.map((feature) => (
           <li key={feature} className="flex items-start gap-2">
-            <CheckCircle size={18} className="text-green-600 mt-0.5" />
+            <CheckCircle size={18} className="text-emerald-500 mt-0.5" />
             <span>{feature}</span>
           </li>
         ))}
@@ -33,4 +33,3 @@ export default function PackageCard({
     </div>
   );
 }
-

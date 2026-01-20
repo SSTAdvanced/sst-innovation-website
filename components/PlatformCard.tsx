@@ -1,6 +1,6 @@
 ﻿import { Globe, LayoutGrid, ShoppingBag, Sparkles, Square } from "lucide-react";
 import type { ElementType } from "react";
-import type { Platform } from "@/lib/constants";
+import type { PlatformItem } from "@/lib/content";
 
 const iconMap: Record<string, ElementType> = {
   wordpress: Globe,
@@ -20,26 +20,25 @@ export default function PlatformCard({
   awards,
   clients,
   suitable
-}: Platform) {
+}: PlatformItem) {
   const Icon = iconMap[icon] ?? Globe;
 
   return (
-    <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-5 flex flex-col gap-3">
+    <div className="group rounded-2xl border border-slate-100 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
       <div className="flex items-center gap-3">
-        <div className={`${color} text-white p-3 rounded-lg`}>
-          <Icon size={22} />
+        <div className={`${color} text-white p-3 rounded-xl shadow-sm`}>
+          <Icon size={20} />
         </div>
-        <h3 className="text-lg font-bold">{platform}</h3>
+        <h3 className="text-lg font-semibold text-slate-900">{platform}</h3>
       </div>
-      <div className="text-sm text-gray-600 space-y-1">
-        <p><span className="font-semibold">อายุแพลตฟอร์ม:</span> {years}</p>
-        <p><span className="font-semibold">ผู้ใช้:</span> {users}</p>
-        <p><span className="font-semibold">เว็บไซต์:</span> {websites}</p>
-        <p><span className="font-semibold">รางวัล:</span> {awards}</p>
-        <p><span className="font-semibold">ลูกค้าชั้นนำ:</span> {clients}</p>
-        <p><span className="font-semibold">เหมาะกับ:</span> {suitable}</p>
+      <div className="mt-4 space-y-1 text-xs text-slate-600">
+        <p><span className="font-semibold text-slate-700">อายุแพลตฟอร์ม:</span> {years}</p>
+        <p><span className="font-semibold text-slate-700">ผู้ใช้:</span> {users}</p>
+        <p><span className="font-semibold text-slate-700">เว็บไซต์:</span> {websites}</p>
+        <p><span className="font-semibold text-slate-700">รางวัล:</span> {awards}</p>
+        <p><span className="font-semibold text-slate-700">ลูกค้าชั้นนำ:</span> {clients}</p>
+        <p><span className="font-semibold text-slate-700">เหมาะกับ:</span> {suitable}</p>
       </div>
     </div>
   );
 }
-

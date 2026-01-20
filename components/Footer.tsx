@@ -1,32 +1,50 @@
-﻿export default function Footer() {
+﻿"use client";
+
+import Container from "@/components/ui/Container";
+import { useI18n } from "@/lib/i18n";
+
+export default function Footer() {
+  const { t } = useI18n();
+
   return (
     <footer className="bg-slate-900 text-slate-200">
-      <div className="container mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-          <h3 className="text-xl font-bold mb-3">WebCraft Pro</h3>
-          <p className="text-slate-300">
-            ทีมงานมืออาชีพพร้อมดูแลทุกขั้นตอน ตั้งแต่วางแผนจนถึงออนไลน์จริง
-          </p>
+      <Container className="grid gap-10 py-12 md:grid-cols-3">
+        <div className="space-y-3">
+          <h3 className="text-xl font-semibold text-white">{t.site.name}</h3>
+          <p className="text-sm text-slate-400">{t.site.tagline}</p>
+          <p className="text-sm text-slate-300">{t.footer.description}</p>
         </div>
-        <div>
-          <h4 className="font-semibold mb-3">ลิงก์สำคัญ</h4>
-          <ul className="space-y-2 text-slate-300">
-            <li><a href="#platform-intro" className="hover:text-white">แพลตฟอร์ม</a></li>
-            <li><a href="#package-list" className="hover:text-white">แพ็คเกจ</a></li>
-            <li><a href="#contact" className="hover:text-white">ติดต่อเรา</a></li>
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
+            {t.footer.contactTitle}
+          </h4>
+          <div className="space-y-2 text-sm text-slate-300">
+            <p>{t.footer.contact.address}</p>
+            <p>{t.footer.contact.phone}</p>
+            <p>{t.footer.contact.line}</p>
+          </div>
+        </div>
+        <div className="space-y-3">
+          <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
+            {t.footer.linksTitle}
+          </h4>
+          <ul className="space-y-2 text-sm text-slate-300">
+            {t.footer.quickLinks.map((link) => (
+              <li key={link.href}>
+                <a href={link.href} className="transition hover:text-white">
+                  {link.label}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
-        <div>
-          <h4 className="font-semibold mb-3">ติดต่อ</h4>
-          <p className="text-slate-300">โทร 02 832 3222</p>
-          <p className="text-slate-300">Line: @igetweb.com</p>
-          <p className="text-slate-300">อีเมล: hello@webcraftpro.co</p>
-        </div>
-      </div>
-      <div className="border-t border-slate-800 text-center text-sm py-4 text-slate-400">
-        ? 2024 WebCraft Pro. All rights reserved.
+      </Container>
+      <div className="border-t border-slate-800">
+        <Container className="flex flex-col items-center justify-between gap-2 py-4 text-xs text-slate-400 md:flex-row">
+          <span>{t.site.copyright}</span>
+          <span>{t.site.name}</span>
+        </Container>
       </div>
     </footer>
   );
 }
-

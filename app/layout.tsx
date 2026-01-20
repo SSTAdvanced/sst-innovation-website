@@ -1,17 +1,26 @@
 ﻿import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import { I18nProvider } from "@/lib/i18n";
 
 export const metadata: Metadata = {
-  title: "WebCraft Pro - สร้างเว็บไซต์ระดับมืออาชีพ",
-  description: "ออกแบบเว็บไซต์สำเร็จรูป รองรับมือถือ ด้วยแพลตฟอร์มอันดับ 1 ในเมืองไทย"
+  title: "SST INNOVATION | Premium Digital Solutions",
+  description: "Website development, dorm/resort management software, and company registration services by SST INNOVATION.",
+  openGraph: {
+    title: "SST INNOVATION | Premium Digital Solutions",
+    description: "Website development, dorm/resort management software, and company registration services by SST INNOVATION.",
+    siteName: "SST INNOVATION",
+    locale: "th_TH",
+    type: "website"
+  }
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="th">
-      <body>{children}</body>
+      <body>
+        <I18nProvider>{children}</I18nProvider>
+      </body>
     </html>
   );
 }
-
