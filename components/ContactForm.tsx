@@ -11,6 +11,12 @@ type FormState = {
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
 
+type SubmitState = {
+  loading: boolean;
+  success: string;
+  error: string;
+};
+
 export default function ContactForm() {
   const [form, setForm] = useState<FormState>({
     name: "",
@@ -19,6 +25,11 @@ export default function ContactForm() {
     message: ""
   });
   const [errors, setErrors] = useState<FormErrors>({});
+  const [submitState, setSubmitState] = useState<SubmitState>({
+    loading: false,
+    success: "",
+    error: ""
+  });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = event.target;
@@ -26,7 +37,7 @@ export default function ContactForm() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const nextErrors: FormErrors = {};
 
@@ -35,9 +46,39 @@ export default function ContactForm() {
     if (!form.email.trim()) nextErrors.email = "กรุณากรอกอีเมล";
 
     setErrors(nextErrors);
+    setSubmitState({ loading: false, success: "", error: "" });
 
-    if (Object.keys(nextErrors).length === 0) {
-      console.log({ ...form });
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
+    setSubmitState({ loading: true, success: "", error: "" });
+
+    try {
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          message: form.message
+        })
+      });
+
+      const result = (await response.json()) as { ok: boolean; error?: string };
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+      }
+
+      setForm({ name: "", phone: "", email: "", message: "" });
+      setSubmitState({ loading: false, success: "ส่งข้อมูลสำเร็จแล้ว", error: "" });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "เกิดข้อผิดพลาด";
+      setSubmitState({ loading: false, success: "", error: message });
     }
   };
 
@@ -88,10 +129,21 @@ export default function ContactForm() {
           className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
-      <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300">
-        ส่งข้อมูล
+
+      {submitState.success ? (
+        <p className="text-sm text-green-600 mb-4">{submitState.success}</p>
+      ) : null}
+      {submitState.error ? (
+        <p className="text-sm text-red-600 mb-4">{submitState.error}</p>
+      ) : null}
+
+      <button
+        type="submit"
+        disabled={submitState.loading}
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+      >
+        {submitState.loading ? "กำลังส่งข้อมูล..." : "ส่งข้อมูล"}
       </button>
     </form>
   );
 }
-
