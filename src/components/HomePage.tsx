@@ -24,16 +24,21 @@ const serviceIcons = [Briefcase, Globe2, Star, MessageSquare];
 
 export default function HomePage() {
   const [lang, setLang] = useState<Lang>("th");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [debugRequestId, setDebugRequestId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     message: "",
+    company: "",
+    startedAt: null as number | null,
   });
+  const isDev =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
 
   const copy = getCopy(lang);
   const eyebrowClass =
@@ -71,6 +76,7 @@ export default function HomePage() {
 
     setStatus("loading");
     setErrorMessage(null);
+    setDebugRequestId(null);
 
     try {
       const response = await fetch("/api/contact", {
@@ -80,22 +86,43 @@ export default function HomePage() {
       });
 
       const data = (await response.json().catch(() => null)) as
-        | { ok: boolean; error?: string }
+        | { ok: boolean; error?: string; requestId?: string }
         | null;
 
       if (!response.ok || !data?.ok) {
+        if (isDev) {
+          console.error("Contact form submit failed", {
+            status: response.status,
+            requestId: data?.requestId ?? null,
+          });
+        }
+        setDebugRequestId(data?.requestId ?? null);
         setErrorMessage(
-          lang === "th"
-            ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
-            : "Submission failed. Please try again."
+          data?.error
+            ? data.error
+            : lang === "th"
+              ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
+              : "Submission failed. Please try again."
         );
         setStatus("error");
         return;
       }
 
-      setFormData({ name: "", phone: "", email: "", message: "" });
+      setFormData({
+        name: "",
+        phone: "",
+        email: "",
+        message: "",
+        company: "",
+        startedAt: null,
+      });
+      setDebugRequestId(null);
       setStatus("success");
     } catch (error) {
+      if (isDev) {
+        console.error("Contact form submit error", { error: String(error) });
+      }
+      setDebugRequestId(null);
       setErrorMessage(
         lang === "th"
           ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
@@ -105,11 +132,19 @@ export default function HomePage() {
     }
   };
 
+  const handleToggleLang = () => {
+    const nextLang = lang === "th" ? "en" : "th";
+    setLang(nextLang);
+    if (typeof document !== "undefined") {
+      document.cookie = `lang=${nextLang}; path=/; max-age=31536000; samesite=lax`;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-mist text-slate-900">
       <Navbar
         lang={lang}
-        onToggleLang={() => setLang(lang === "th" ? "en" : "th")}
+        onToggleLang={handleToggleLang}
         labels={copy.nav}
         cta={copy.nav.contact}
       />
@@ -128,17 +163,11 @@ export default function HomePage() {
               </h1>
               <p className="text-lg text-blue-100">{copy.hero.subtitle}</p>
               <div className="flex flex-wrap gap-4">
-                <a
-                  href="#contact"
-                  className={ctaPrimaryClass}
-                >
+                <a href="#contact" className={ctaPrimaryClass}>
                   {copy.hero.primaryCta}
                   <ArrowRight className="h-4 w-4" />
                 </a>
-                <a
-                  href="#package-list"
-                  className={ctaSecondaryClass}
-                >
+                <a href="#package-list" className={ctaSecondaryClass}>
                   {copy.hero.secondaryCta}
                 </a>
               </div>
@@ -349,66 +378,100 @@ export default function HomePage() {
                 <div className="mt-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-card-soft">
                   <form className="space-y-4" onSubmit={handleSubmit}>
                     <div>
-                      <label className={formLabelClass}>
+                      <label className={formLabelClass} htmlFor="contact-name">
                         {copy.contact.name}
                       </label>
                       <input
+                        id="contact-name"
                         type="text"
                         required
+                        maxLength={120}
                         className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
                         value={formData.name}
                         onChange={(event) =>
-                          setFormData({ ...formData, name: event.target.value })
+                          setFormData({
+                            ...formData,
+                            name: event.target.value,
+                            startedAt: formData.startedAt ?? Date.now(),
+                          })
                         }
                       />
                     </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className={formLabelClass}>
+                        <label className={formLabelClass} htmlFor="contact-phone">
                           {copy.contact.phone}
                         </label>
                         <input
+                          id="contact-phone"
                           type="tel"
                           required
+                          maxLength={50}
                           className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
                           value={formData.phone}
                           onChange={(event) =>
-                            setFormData({ ...formData, phone: event.target.value })
+                            setFormData({
+                              ...formData,
+                              phone: event.target.value,
+                              startedAt: formData.startedAt ?? Date.now(),
+                            })
                           }
                         />
                       </div>
                       <div>
-                        <label className={formLabelClass}>
+                        <label className={formLabelClass} htmlFor="contact-email">
                           {copy.contact.email}
                         </label>
                         <input
+                          id="contact-email"
                           type="email"
                           required
+                          maxLength={120}
                           className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
                           value={formData.email}
                           onChange={(event) =>
-                            setFormData({ ...formData, email: event.target.value })
+                            setFormData({
+                              ...formData,
+                              email: event.target.value,
+                              startedAt: formData.startedAt ?? Date.now(),
+                            })
                           }
                         />
                       </div>
                     </div>
                     <div>
-                      <label className={formLabelClass}>
+                      <label className={formLabelClass} htmlFor="contact-message">
                         {copy.contact.message}
                       </label>
                       <textarea
+                        id="contact-message"
                         required
                         rows={4}
+                        maxLength={2000}
                         className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none transition focus:border-blue-500"
                         value={formData.message}
                         onChange={(event) =>
                           setFormData({
                             ...formData,
                             message: event.target.value,
+                            startedAt: formData.startedAt ?? Date.now(),
                           })
                         }
                       />
                     </div>
+                    <input
+                      type="text"
+                      name="company"
+                      autoComplete="off"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      aria-label="Company"
+                      className="hidden"
+                      value={formData.company}
+                      onChange={(event) =>
+                        setFormData({ ...formData, company: event.target.value })
+                      }
+                    />
                     <button
                       type="submit"
                       disabled={status === "loading"}
@@ -425,6 +488,7 @@ export default function HomePage() {
                           (lang === "th"
                             ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
                             : "Submission failed. Please try again.")}
+                        {isDev && debugRequestId ? ` (requestId: ${debugRequestId})` : ""}
                       </p>
                     ) : null}
                   </form>
@@ -487,7 +551,9 @@ export default function HomePage() {
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className={eyebrowClass}>{lang === "th" ? "บริการเสริม" : "Add-ons"}</p>
+                <p className={eyebrowClass}>
+                  {lang === "th" ? "บริการเสริม" : "Add-ons"}
+                </p>
                 <h2 className="mt-3 font-[var(--font-heading)] text-3xl font-semibold tracking-tight text-slate-900">
                   {copy.additional.title}
                 </h2>
