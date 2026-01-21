@@ -85,10 +85,9 @@ export default function HomePage() {
 
       if (!response.ok || !data?.ok) {
         setErrorMessage(
-          data?.error ||
-            (lang === "th"
-              ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
-              : "Submission failed. Please try again.")
+          lang === "th"
+            ? "ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง"
+            : "Submission failed. Please try again."
         );
         setStatus("error");
         return;
