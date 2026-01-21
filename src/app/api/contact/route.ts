@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { sendLeadNotification } from "@/lib/email";
 
 const isValidEmail = (value: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -48,6 +49,19 @@ export async function POST(req: Request) {
         { ok: false, error: "Database insert failed", details: error.message },
         { status: 500 }
       );
+    }
+
+    try {
+      await sendLeadNotification({
+        name,
+        phone: phone || null,
+        email: email || null,
+        message,
+        locale,
+        source: "website",
+      });
+    } catch (emailError) {
+      console.error("Lead email notification failed:", emailError);
     }
 
     return NextResponse.json({ ok: true });

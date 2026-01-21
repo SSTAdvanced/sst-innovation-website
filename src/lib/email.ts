@@ -1,0 +1,120 @@
+import "server-only";
+
+import nodemailer from "nodemailer";
+
+type LeadEmailPayload = {
+  name: string;
+  phone?: string | null;
+  email?: string | null;
+  message: string;
+  locale: string;
+  source: string;
+};
+
+type MailConfig = {
+  host: string;
+  port: number;
+  secure: boolean;
+  user: string;
+  pass: string;
+  from: string;
+  to: string;
+};
+
+const getMailConfig = (): MailConfig => {
+  const host = process.env.SMTP_HOST;
+  const port = Number(process.env.SMTP_PORT ?? "587");
+  const user = process.env.SMTP_USER;
+  const pass = process.env.SMTP_PASS;
+  const from = process.env.MAIL_FROM;
+  const to = process.env.ADMIN_NOTIFY_EMAIL;
+
+  if (!host || !user || !pass || !from || !to) {
+    throw new Error("Missing SMTP environment variables.");
+  }
+
+  return {
+    host,
+    port,
+    secure: port === 465,
+    user,
+    pass,
+    from,
+    to,
+  };
+};
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;");
+
+export const sendLeadNotification = async (payload: LeadEmailPayload) => {
+  const config = getMailConfig();
+  const transporter = nodemailer.createTransport({
+    host: config.host,
+    port: config.port,
+    secure: config.secure,
+    auth: { user: config.user, pass: config.pass },
+  });
+
+  const subject = `New lead: ${payload.name}`;
+  const messageText = [
+    `Name: ${payload.name}`,
+    `Phone: ${payload.phone || "-"}`,
+    `Email: ${payload.email || "-"}`,
+    `Locale: ${payload.locale}`,
+    `Source: ${payload.source}`,
+    `Message: ${payload.message}`,
+  ].join("\n");
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Tahoma, Arial, sans-serif; background:#f4f6fb; padding:32px;">
+      <div style="max-width:680px; margin:0 auto; background:#ffffff; border-radius:16px; padding:28px; box-shadow:0 14px 40px rgba(15,23,42,0.12);">
+        <p style="font-size:12px; text-transform:uppercase; letter-spacing:0.2em; color:#1d4ed8; margin:0 0 8px;">
+          SST INNOVATION
+        </p>
+        <h2 style="margin:0 0 16px; font-size:24px; color:#0f172a;">New Web Lead</h2>
+        <p style="margin:0 0 20px; color:#475569; font-size:14px;">
+          A new contact form submission has been received.
+        </p>
+        <table style="width:100%; border-collapse:collapse; font-size:14px; color:#0f172a;">
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600; width:140px;">Name</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.name)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600;">Phone</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.phone || "-")}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600;">Email</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.email || "-")}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600;">Locale</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.locale)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600;">Source</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.source)}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px; background:#f8fafc; font-weight:600;">Message</td>
+            <td style="padding:10px 12px;">${escapeHtml(payload.message)}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  `;
+
+  await transporter.sendMail({
+    from: config.from,
+    to: config.to,
+    subject,
+    text: messageText,
+    html,
+  });
+};
