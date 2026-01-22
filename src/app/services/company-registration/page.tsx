@@ -7,6 +7,22 @@ import { getRequestedLocale } from "@/lib/locale";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://websst.vercel.app";
 
+type ContentSection = {
+  h2: string;
+  paragraphs: string[];
+  subsections?: { title: string; paragraphs: string[] }[];
+};
+
+type ContentLocale = {
+  meta: { title: string; description: string };
+  hero: { title: string; subtitle: string };
+  benefits: string[];
+  sections: ContentSection[];
+  faq: { q: string; a: string }[];
+  cta: { primary: string; secondary: string; line: string };
+  crumbs: { label: string; href?: string }[];
+};
+
 const content = {
   th: {
     meta: {
@@ -202,7 +218,7 @@ const content = {
       { label: "Company Registration" },
     ],
   },
-} as const;
+} satisfies Record<"th" | "en", ContentLocale>;
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
