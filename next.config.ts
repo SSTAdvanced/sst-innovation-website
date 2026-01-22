@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Common variants / old paths.
+      { source: "/template/:path*", destination: "/templates/:path*", permanent: false },
+      { source: "/portfolio", destination: "/templates", permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;

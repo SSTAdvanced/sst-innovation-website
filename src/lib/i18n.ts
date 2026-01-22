@@ -93,7 +93,7 @@ export const dict: Record<Lang, Dict> = {
       platforms: "แพลตฟอร์ม",
       services: "บริการ",
       packages: "แพ็กเกจ",
-      portfolio: "ผลงาน",
+      portfolio: "รูปแบบเว็บไซต์",
       articles: "บทความ",
       contact: "ติดต่อ",
     },
@@ -280,11 +280,11 @@ export const dict: Record<Lang, Dict> = {
   en: {
     nav: {
       home: "Home",
-      features: "Features",
+      features: "Highlights",
       platforms: "Platforms",
       services: "Services",
       packages: "Packages",
-      portfolio: "Portfolio",
+      portfolio: "Website Templates",
       articles: "Articles",
       contact: "Contact",
     },

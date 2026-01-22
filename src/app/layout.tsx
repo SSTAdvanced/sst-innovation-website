@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
-import { headers } from "next/headers";
 import Analytics from "@/components/Analytics";
-import MobileAppShell from "@/components/MobileAppShell";
-import { MobileShellProvider } from "@/components/MobileShellContext";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale, type Locale } from "@/lib/locale";
 import "./globals.css";
@@ -85,20 +82,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const locale = await getRequestedLocale();
-  const userAgent = (await headers()).get("user-agent") ?? "";
-  const isWindows = /Windows/i.test(userAgent);
-  const isAndroid = /Android/i.test(userAgent);
-  const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
-  const mobileShellEnabled = !isWindows && (isAndroid || isIOS);
 
   return (
     <html lang={locale}>
       <body className={`${bodyFont.variable} ${headingFont.variable} antialiased`}>
         <StructuredData locale={locale} includeGlobal />
         <Analytics />
-        <MobileShellProvider enabled={mobileShellEnabled}>
-          {mobileShellEnabled ? <MobileAppShell>{children}</MobileAppShell> : children}
-        </MobileShellProvider>
+        {children}
       </body>
     </html>
   );

@@ -19,7 +19,6 @@ import Footer from "@/components/Footer";
 import PlatformCard from "@/components/PlatformCard";
 import PackageCard from "@/components/PackageCard";
 import ServiceLinks from "@/components/ServiceLinks";
-import { useMobileShell } from "@/components/MobileShellContext";
 import { getCopy, type Lang } from "@/lib/i18n";
 
 const featureIcons = [ShieldCheck, Sparkles, Award, Layers];
@@ -308,18 +307,14 @@ export default function HomePage() {
     }
   };
 
-  const mobileShellEnabled = useMobileShell();
-
   return (
     <div className="min-h-screen bg-mist text-slate-900">
-      {mobileShellEnabled ? null : (
-        <Navbar
-          lang={lang}
-          onToggleLang={handleToggleLang}
-          labels={copy.nav}
-          cta={copy.nav.contact}
-        />
-      )}
+      <Navbar
+        lang={lang}
+        onToggleLang={handleToggleLang}
+        labels={copy.nav}
+        cta={copy.nav.contact}
+      />
 
       <main id="top">
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 text-white">
@@ -492,7 +487,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {false ? (
         <section id="platform-intro" className="bg-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -514,7 +508,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        ) : null}
 
         <section id="services" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
@@ -552,8 +545,6 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-
-        <div id="packages" />
         <section id="package-list" className="bg-gradient-to-b from-white to-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
