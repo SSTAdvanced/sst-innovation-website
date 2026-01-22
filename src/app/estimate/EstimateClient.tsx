@@ -41,15 +41,19 @@ export default function EstimateClient({
   const [estimateResult, setEstimateResult] = useState<EstimateResult | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
 
-  const [websiteInputs, setWebsiteInputs] = useState({
+  const [websiteInputs, setWebsiteInputs] = useState<{ pages: number; features: string[] }>({
     pages: estimatorConfig.website.minPages,
     features: [] as string[],
   });
-  const [dormitoryInputs, setDormitoryInputs] = useState({
+  const [dormitoryInputs, setDormitoryInputs] = useState<{ rooms: number; modules: string[] }>({
     rooms: 40,
     modules: [] as string[],
   });
-  const [analyticsInputs, setAnalyticsInputs] = useState({
+  const [analyticsInputs, setAnalyticsInputs] = useState<{
+    channels: number;
+    reporting: keyof typeof estimatorConfig.analytics.reportingFrequency;
+    dashboard: keyof typeof estimatorConfig.analytics.dashboards;
+  }>({
     channels: 3,
     reporting: "monthly",
     dashboard: "basic",
