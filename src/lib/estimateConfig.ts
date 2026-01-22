@@ -47,6 +47,6 @@ export const estimatorConfig = {
       advanced: { label: "Live dashboard + alerts", price: 16000 },
     },
   },
-} as const;
+};
 
 export type EstimatorService = keyof typeof estimatorConfig;
