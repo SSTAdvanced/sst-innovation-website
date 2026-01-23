@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Lang } from "@/lib/i18n";
 import { trackGaEvent } from "@/lib/ga";
 import { logEvent } from "@/lib/eventLogger";
+import MobileAppNav, { isMobileAppMode } from "@/components/MobileAppNav";
 
 const navItems = [
   { href: "/#top", key: "home" },
@@ -29,21 +30,30 @@ type NavbarProps = {
 };
 
 function usePlatform() {
-  const [isAppMobile, setIsAppMobile] = useState(false);
-
-  useEffect(() => {
+  const [isAppMobile] = useState(() => {
     const ua = typeof navigator === "undefined" ? "" : navigator.userAgent ?? "";
     const isWindows = /Windows/i.test(ua);
     const isAndroid = /Android/i.test(ua);
     const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    setIsAppMobile(!isWindows && (isAndroid || isIOS));
-  }, []);
+    return !isWindows && (isAndroid || isIOS);
+  });
 
   return { isAppMobile };
 }
 
 export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps) {
   const { isAppMobile } = usePlatform();
+
+  if (isAppMobile && isMobileAppMode()) {
+    return (
+      <MobileAppNav
+        lang={lang}
+        labels={labels}
+        cta={cta}
+        onToggleLang={onToggleLang}
+      />
+    );
+  }
 
   const t =
     lang === "th"
@@ -538,4 +548,3 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
     </header>
   );
 }
-

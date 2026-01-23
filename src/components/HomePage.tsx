@@ -16,7 +16,6 @@ import {
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import PlatformCard from "@/components/PlatformCard";
 import PackageCard from "@/components/PackageCard";
 import ServiceLinks from "@/components/ServiceLinks";
 import { getCopy, type Lang } from "@/lib/i18n";
@@ -483,28 +482,6 @@ export default function HomePage() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-        </section>
-
-        <section id="platform-intro" className="bg-mist py-20">
-          <div className="mx-auto w-full max-w-6xl px-6">
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className={eyebrowClass}>{copy.nav.platforms}</p>
-                <h2 className="mt-3 font-[var(--font-heading)] text-3xl font-semibold tracking-tight text-slate-900">
-                  {copy.platforms.title}
-                </h2>
-                <p className="mt-3 max-w-xl text-slate-600">{copy.platforms.subtitle}</p>
-              </div>
-              <div className={pillMutedClass}>
-                {lang === "th" ? "สถิติจากโปรเจกต์จริง" : "Real project metrics"}
-              </div>
-            </div>
-            <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {copy.platforms.items.map((item) => (
-                <PlatformCard key={item.platform} {...item} />
-              ))}
             </div>
           </div>
         </section>
