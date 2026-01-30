@@ -64,9 +64,13 @@ const escapeHtml = (value: string) =>
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;");
 
-export const sendLeadNotification = async (payload: LeadEmailPayload) => {
+export type LeadNotifyStatus = "sent" | "skipped" | "failed";
+
+export const sendLeadNotification = async (
+  payload: LeadEmailPayload
+): Promise<LeadNotifyStatus> => {
   const config = getMailConfig();
-  if (!config) return;
+  if (!config) return "skipped";
   const transporter = nodemailer.createTransport({
     host: config.host,
     port: config.port,
@@ -131,4 +135,6 @@ export const sendLeadNotification = async (payload: LeadEmailPayload) => {
     text: messageText,
     html,
   });
+
+  return "sent";
 };

@@ -173,7 +173,7 @@ export async function POST(req: Request) {
         priceMin && priceMax
           ? `Estimate range: ${priceMin} - ${priceMax}`
           : "Estimate range: -";
-      await sendLeadNotification({
+      const emailStatus = await sendLeadNotification({
         name,
         phone: phone || null,
         email: email || null,
@@ -181,6 +181,9 @@ export async function POST(req: Request) {
         locale,
         source: `estimate:${service ?? "unknown"}`,
       });
+      if (emailStatus === "skipped") {
+        console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
+      }
     } catch (emailError) {
       console.error("Lead email notification failed:", emailError);
     }
@@ -191,7 +194,7 @@ export async function POST(req: Request) {
           priceMin && priceMax
             ? `Estimate range: ${priceMin} - ${priceMax}`
             : "Estimate range: -";
-        await notifyLineViaCloudflare({
+        const lineStatus = await notifyLineViaCloudflare({
           leadId: lead.id,
           name,
           phone: phone || null,
@@ -201,14 +204,20 @@ export async function POST(req: Request) {
           source: `estimate:${service ?? "unknown"}`,
           requestId,
         });
-      } catch (lineError) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error("Line webhook notification failed", { requestId, lineError });
+        if (lineStatus === "skipped") {
+          console.warn("Line webhook notification skipped (missing env)", { requestId });
         }
+      } catch (lineError) {
+        console.error("Line webhook notification failed", { requestId, lineError });
       }
     }
 
-    return NextResponse.json({ ok: true, requestId, leadId: lead?.id ?? null });
+    return NextResponse.json({
+      ok: true,
+      requestId,
+      leadId: lead?.id ?? null,
+      // Note: statuses for this endpoint are logged; caller UI does not depend on them.
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error({ requestId, error: err });

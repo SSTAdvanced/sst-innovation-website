@@ -1,6 +1,8 @@
 import "server-only";
 
-type LeadNotificationPayload = {
+export type LeadNotifyStatus = "sent" | "skipped" | "failed";
+
+export type LeadNotificationPayload = {
   leadId: string;
   name: string;
   phone?: string | null;
@@ -22,7 +24,7 @@ function readEnv(name: string): string | null {
 
 function formatText(payload: LeadNotificationPayload) {
   const lines = [
-    "📩 New lead (SST INNOVATION)",
+    "New lead (SST INNOVATION)",
     `Name: ${payload.name}`,
     `Phone: ${payload.phone || "-"}`,
     `Email: ${payload.email || "-"}`,
@@ -36,9 +38,17 @@ function formatText(payload: LeadNotificationPayload) {
   return lines.join("\n");
 }
 
-export async function notifyLineViaCloudflare(payload: LeadNotificationPayload) {
+export async function notifyLineViaCloudflare(
+  payload: LeadNotificationPayload
+): Promise<LeadNotifyStatus> {
   const webhookUrl = readEnv("CLOUDFLARE_LINE_WEBHOOK_URL");
-  if (!webhookUrl) return;
+  if (!webhookUrl) return "skipped";
+
+  if (webhookUrl.includes("/line-callback")) {
+    throw new Error(
+      "CLOUDFLARE_LINE_WEBHOOK_URL is pointing to /line-callback. It must point to your Worker endpoint that receives web notifications (e.g. /webhook)."
+    );
+  }
 
   const secret = readEnv("CLOUDFLARE_LINE_WEBHOOK_SECRET");
   const controller = new AbortController();
@@ -63,6 +73,8 @@ export async function notifyLineViaCloudflare(payload: LeadNotificationPayload) 
       const body = await res.text().catch(() => "");
       throw new Error(`Cloudflare webhook failed: ${res.status} ${body}`.trim());
     }
+
+    return "sent";
   } finally {
     clearTimeout(timeout);
   }
