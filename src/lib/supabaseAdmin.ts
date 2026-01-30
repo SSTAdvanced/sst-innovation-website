@@ -10,10 +10,15 @@ function requireEnv(name: string): string {
 }
 
 function requireServiceRoleKeyLooksValid(key: string) {
-  // Supabase anon/service_role keys are JWTs (header.payload.signature)
-  if (key.split(".").length < 3) {
+  // Supabase keys can be:
+  // - Legacy JWTs: header.payload.signature (start with "eyJ")
+  // - New key formats: "sb_secret_..." (and similar), used by Supabase integrations
+  const looksLikeJwt = key.split(".").length >= 3;
+  const looksLikeNewSecretKey = /^sb_secret_/i.test(key);
+
+  if (!looksLikeJwt && !looksLikeNewSecretKey) {
     throw new Error(
-      "SUPABASE_SERVICE_ROLE_KEY does not look like a JWT. Paste the service_role key from Supabase Project Settings -> API."
+      "SUPABASE_SERVICE_ROLE_KEY looks invalid. Paste the 'service_role' (secret) key from Supabase Project Settings -> API."
     );
   }
 }
