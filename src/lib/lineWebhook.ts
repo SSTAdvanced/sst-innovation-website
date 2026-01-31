@@ -19,7 +19,12 @@ function readEnv(name: string): string | null {
   if (!raw) return null;
   const trimmed = raw.trim();
   if (!trimmed) return null;
-  return trimmed;
+  const unquoted =
+    (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
+    (trimmed.startsWith("'") && trimmed.endsWith("'"))
+      ? trimmed.slice(1, -1).trim()
+      : trimmed;
+  return unquoted || null;
 }
 
 function formatText(payload: LeadNotificationPayload) {
@@ -52,26 +57,38 @@ export async function notifyLineViaCloudflare(
 
   const secret = readEnv("CLOUDFLARE_LINE_WEBHOOK_SECRET");
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 6500);
+  const timeout = setTimeout(() => controller.abort(), 8500);
 
   try {
-    const res = await fetch(webhookUrl, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        ...(secret ? { "x-webhook-secret": secret } : {}),
-      },
-      body: JSON.stringify({
-        type: "lead",
-        text: formatText(payload),
-        payload,
-      }),
-      signal: controller.signal,
+    const body = JSON.stringify({
+      type: "lead",
+      text: formatText(payload),
+      payload,
     });
+    const headers: Record<string, string> = {
+      "content-type": "application/json",
+    };
+    if (secret) headers["x-webhook-secret"] = secret;
 
-    if (!res.ok) {
-      const body = await res.text().catch(() => "");
-      throw new Error(`Cloudflare webhook failed: ${res.status} ${body}`.trim());
+    const attempt = async () => {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers,
+        body,
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(`Cloudflare webhook failed: ${res.status} ${text}`.trim());
+      }
+    };
+
+    try {
+      await attempt();
+    } catch {
+      // one retry for transient network/worker cold start
+      await new Promise((r) => setTimeout(r, 400));
+      await attempt();
     }
 
     return "sent";
@@ -79,4 +96,3 @@ export async function notifyLineViaCloudflare(
     clearTimeout(timeout);
   }
 }
-
