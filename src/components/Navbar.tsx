@@ -12,11 +12,11 @@ const navItems = [
   { href: "/#top", key: "home" },
   { href: "/#features", key: "features" },
   { href: "/#services", key: "services" },
-  { href: "/#package-list", key: "packages" },
+  { href: "/packages", key: "packages" },
   // Keep key as "portfolio" to avoid changing the i18n schema elsewhere; label becomes "Website Templates".
   { href: "/templates", key: "portfolio" },
   { href: "/articles", key: "articles" },
-  { href: "/#contact", key: "contact" },
+  { href: "/contact", key: "contact" },
 ] as const;
 
 type NavKey = (typeof navItems)[number]["key"];
@@ -29,6 +29,9 @@ type NavbarProps = {
 };
 
 export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps) {
+  const featuresOverviewLabel = lang === "th" ? "จุดเด่นโดยรวม" : "Highlights overview";
+  const featuresSeoAiLabel = "SEO AI";
+
   const t =
     lang === "th"
       ? {
@@ -36,6 +39,10 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
           servicesWebsite: "รับทำเว็บไซต์",
           servicesDorm: "ระบบหอพัก/รีสอร์ท",
           servicesCompany: "จดทะเบียนบริษัท",
+          packagesPos: "แพ็คเกจ ระบบ POS",
+          packagesWebsite: "แพ็กเกจรับทำเว็บไซต์",
+          packagesDorm: "แพ็กเกจระบบหอพัก",
+          packagesCompany: "แพ็กเกจจดทะเบียนบริษัท",
           templatesCorporate: "เว็บไซต์องค์กร",
           templatesEcommerce: "ร้านค้าออนไลน์",
           menu: "เมนู",
@@ -47,6 +54,10 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
           servicesWebsite: "Website Development",
           servicesDorm: "Dormitory/Resort System",
           servicesCompany: "Company Registration",
+          packagesPos: "POS system package",
+          packagesWebsite: "Website package",
+          packagesDorm: "Dormitory package",
+          packagesCompany: "Company registration package",
           templatesCorporate: "Corporate",
           templatesEcommerce: "Ecommerce",
           menu: "Menu",
@@ -71,34 +82,46 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
     });
   };
 
+  const [featuresOpen, setFeaturesOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [packagesOpen, setPackagesOpen] = useState(false);
   const [templatesOpen, setTemplatesOpen] = useState(false);
+  const featuresMenuDesktopRef = useRef<HTMLDivElement | null>(null);
   const servicesMenuDesktopRef = useRef<HTMLDivElement | null>(null);
+  const packagesMenuDesktopRef = useRef<HTMLDivElement | null>(null);
   const templatesMenuDesktopRef = useRef<HTMLDivElement | null>(null);
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileFeaturesOpen, setMobileFeaturesOpen] = useState(false);
   const [mobileServicesOpen, setMobileServicesOpen] = useState(false);
+  const [mobilePackagesOpen, setMobilePackagesOpen] = useState(false);
   const [mobileTemplatesOpen, setMobileTemplatesOpen] = useState(false);
   const mobileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!servicesOpen && !templatesOpen && !mobileMenuOpen) {
+    if (!featuresOpen && !servicesOpen && !packagesOpen && !templatesOpen && !mobileMenuOpen) {
       return;
     }
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        setFeaturesOpen(false);
         setServicesOpen(false);
+        setPackagesOpen(false);
         setTemplatesOpen(false);
         setMobileMenuOpen(false);
+        setMobileFeaturesOpen(false);
         setMobileServicesOpen(false);
+        setMobilePackagesOpen(false);
         setMobileTemplatesOpen(false);
       }
     };
 
     const onPointerDown = (event: PointerEvent) => {
       const containers = [
+        featuresMenuDesktopRef.current,
         servicesMenuDesktopRef.current,
+        packagesMenuDesktopRef.current,
         templatesMenuDesktopRef.current,
         mobileMenuRef.current,
       ].filter((node): node is HTMLDivElement => Boolean(node));
@@ -110,10 +133,14 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
         return;
       }
       if (containers.every((container) => !container.contains(target))) {
+        setFeaturesOpen(false);
         setServicesOpen(false);
+        setPackagesOpen(false);
         setTemplatesOpen(false);
         setMobileMenuOpen(false);
+        setMobileFeaturesOpen(false);
         setMobileServicesOpen(false);
+        setMobilePackagesOpen(false);
         setMobileTemplatesOpen(false);
       }
     };
@@ -124,7 +151,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("pointerdown", onPointerDown);
     };
-  }, [servicesOpen, templatesOpen, mobileMenuOpen]);
+  }, [featuresOpen, servicesOpen, packagesOpen, templatesOpen, mobileMenuOpen]);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -159,7 +186,12 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-slate-700 lg:flex">
           {navItems.map((item) => {
-            if (item.key !== "services" && item.key !== "portfolio") {
+            if (
+              item.key !== "features" &&
+              item.key !== "services" &&
+              item.key !== "packages" &&
+              item.key !== "portfolio"
+            ) {
               return (
                 <Link
                   key={item.key}
@@ -172,6 +204,114 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
               );
             }
 
+            if (item.key === "features") {
+              return (
+                <div key={item.key} ref={featuresMenuDesktopRef} className="relative">
+                  <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={featuresOpen}
+                    onClick={() => {
+                      setFeaturesOpen((prev) => !prev);
+                      setServicesOpen(false);
+                      setPackagesOpen(false);
+                      setTemplatesOpen(false);
+                    }}
+                    className="inline-flex items-center gap-1 transition-colors hover:text-slate-900"
+                  >
+                    {labels[item.key]}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+
+                  {featuresOpen ? (
+                    <div
+                      role="menu"
+                      className="absolute left-0 top-full mt-3 w-64 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
+                    >
+                      <Link
+                        role="menuitem"
+                        href="/#features"
+                        onClick={() => setFeaturesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {featuresOverviewLabel}
+                      </Link>
+                      <Link
+                        role="menuitem"
+                        href="/seo-ai"
+                        onClick={() => setFeaturesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {featuresSeoAiLabel}
+                      </Link>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            }
+
+            if (item.key === "packages") {
+              return (
+                <div key={item.key} ref={packagesMenuDesktopRef} className="relative">
+                  <button
+                    type="button"
+                    aria-haspopup="menu"
+                    aria-expanded={packagesOpen}
+                    onClick={() => {
+                      setPackagesOpen((prev) => !prev);
+                      setFeaturesOpen(false);
+                      setServicesOpen(false);
+                      setTemplatesOpen(false);
+                    }}
+                    className="inline-flex items-center gap-1 transition-colors hover:text-slate-900"
+                  >
+                    {labels[item.key]}
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+
+                  {packagesOpen ? (
+                    <div
+                      role="menu"
+                      className="absolute left-0 top-full mt-3 w-72 rounded-2xl border border-slate-200 bg-white p-2 shadow-lg"
+                    >
+                      <Link
+                        role="menuitem"
+                        href="/packages#pos"
+                        onClick={() => setPackagesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {t.packagesPos}
+                      </Link>
+                      <Link
+                        role="menuitem"
+                        href="/packages#website"
+                        onClick={() => setPackagesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {t.packagesWebsite}
+                      </Link>
+                      <Link
+                        role="menuitem"
+                        href="/packages#dormitory"
+                        onClick={() => setPackagesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {t.packagesDorm}
+                      </Link>
+                      <Link
+                        role="menuitem"
+                        href="/packages#company"
+                        onClick={() => setPackagesOpen(false)}
+                        className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                      >
+                        {t.packagesCompany}
+                      </Link>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            }
+
             if (item.key === "portfolio") {
               return (
                 <div key={item.key} ref={templatesMenuDesktopRef} className="relative">
@@ -181,6 +321,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                     aria-expanded={templatesOpen}
                     onClick={() => {
                       setTemplatesOpen((prev) => !prev);
+                      setFeaturesOpen(false);
                       setServicesOpen(false);
                     }}
                     className="inline-flex items-center gap-1 transition-colors hover:text-slate-900"
@@ -224,7 +365,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                   aria-expanded={servicesOpen}
                   onClick={() => {
                     setServicesOpen((prev) => !prev);
+                    setFeaturesOpen(false);
                     setTemplatesOpen(false);
+                    setPackagesOpen(false);
                   }}
                   className="inline-flex items-center gap-1 transition-colors hover:text-slate-900"
                 >
@@ -239,7 +382,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                   >
                     <Link
                       role="menuitem"
-                      href="/#services"
+                      href="/services"
                       onClick={() => {
                         onNavClick("services");
                         setServicesOpen(false);
@@ -302,27 +445,31 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
             </button>
 
             {mobileMenuOpen ? (
-              <div role="dialog" aria-modal="true" className="fixed inset-0 z-50">
+              <div role="dialog" aria-modal="true" className="fixed inset-0 z-[999]">
                 <button
                   type="button"
                   aria-label={t.close}
                   onClick={() => {
                     setMobileMenuOpen(false);
+                    setMobileFeaturesOpen(false);
                     setMobileServicesOpen(false);
+                    setMobilePackagesOpen(false);
                     setMobileTemplatesOpen(false);
                   }}
-                  className="absolute inset-0 bg-black/40"
+                  className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px]"
                 />
 
-                <div className="absolute right-0 top-0 h-full w-[20rem] max-w-[85vw] bg-white shadow-2xl">
-                  <div className="flex h-14 items-center justify-between border-b border-slate-200 px-4">
+                <div className="fixed inset-y-0 right-0 h-[100dvh] w-full bg-white shadow-2xl ring-1 ring-black/10 sm:w-[20rem] sm:max-w-[85vw] sm:rounded-l-3xl">
+                  <div className="flex min-h-14 items-center justify-between border-b border-slate-200 px-4 pt-[env(safe-area-inset-top)]">
                     <p className="text-sm font-semibold text-slate-900">{t.menu}</p>
                     <button
                       type="button"
                       aria-label={t.close}
                       onClick={() => {
                         setMobileMenuOpen(false);
+                        setMobileFeaturesOpen(false);
                         setMobileServicesOpen(false);
+                        setMobilePackagesOpen(false);
                         setMobileTemplatesOpen(false);
                       }}
                       className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-slate-300"
@@ -331,30 +478,60 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                     </button>
                   </div>
 
-                  <div className="h-[calc(100%-3.5rem)] overflow-y-auto px-4 py-4">
+                  <div className="h-[calc(100dvh-3.5rem)] overflow-y-auto px-4 py-4 pb-[env(safe-area-inset-bottom)]">
                     <div className="space-y-1">
                       <Link
                         href="/#top"
                         onClick={() => {
                           setMobileMenuOpen(false);
+                          setMobileFeaturesOpen(false);
                           setMobileServicesOpen(false);
+                          setMobilePackagesOpen(false);
                           setMobileTemplatesOpen(false);
                         }}
                         className="block rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
                       >
                         {labels.home}
                       </Link>
-                      <Link
-                        href="/#features"
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setMobileServicesOpen(false);
-                          setMobileTemplatesOpen(false);
-                        }}
-                        className="block rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+
+                      <button
+                        type="button"
+                        onClick={() => setMobileFeaturesOpen((prev) => !prev)}
+                        className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
                       >
-                        {labels.features}
-                      </Link>
+                        <span>{labels.features}</span>
+                        <ChevronDown className="h-5 w-5" />
+                      </button>
+                      {mobileFeaturesOpen ? (
+                        <div className="space-y-1 px-3 pb-2">
+                          <Link
+                            href="/#features"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {featuresOverviewLabel}
+                          </Link>
+                          <Link
+                            href="/seo-ai"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {featuresSeoAiLabel}
+                          </Link>
+                        </div>
+                      ) : null}
 
                       <button
                         type="button"
@@ -371,7 +548,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             onClick={() => {
                               onNavClick("services");
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -383,7 +562,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             onClick={() => {
                               onNavClick("services");
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -395,7 +576,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             onClick={() => {
                               onNavClick("services");
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -407,7 +590,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             onClick={() => {
                               onNavClick("services");
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -417,17 +602,70 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                         </div>
                       ) : null}
 
-                      <Link
-                        href="/#package-list"
-                        onClick={() => {
-                          setMobileMenuOpen(false);
-                          setMobileServicesOpen(false);
-                          setMobileTemplatesOpen(false);
-                        }}
-                        className="block rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
+                      <button
+                        type="button"
+                        onClick={() => setMobilePackagesOpen((prev) => !prev)}
+                        className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
                       >
-                        {labels.packages}
-                      </Link>
+                        <span>{labels.packages}</span>
+                        <ChevronDown className="h-5 w-5" />
+                      </button>
+                      {mobilePackagesOpen ? (
+                        <div className="space-y-1 px-3 pb-2">
+                          <Link
+                            href="/packages#pos"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {t.packagesPos}
+                          </Link>
+                          <Link
+                            href="/packages#website"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {t.packagesWebsite}
+                          </Link>
+                          <Link
+                            href="/packages#dormitory"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {t.packagesDorm}
+                          </Link>
+                          <Link
+                            href="/packages#company"
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
+                              setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
+                              setMobileTemplatesOpen(false);
+                            }}
+                            className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
+                          >
+                            {t.packagesCompany}
+                          </Link>
+                        </div>
+                      ) : null}
 
                       <button
                         type="button"
@@ -443,7 +681,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             href="/templates/corporate"
                             onClick={() => {
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -454,7 +694,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                             href="/templates/ecommerce"
                             onClick={() => {
                               setMobileMenuOpen(false);
+                              setMobileFeaturesOpen(false);
                               setMobileServicesOpen(false);
+                              setMobilePackagesOpen(false);
                               setMobileTemplatesOpen(false);
                             }}
                             className="block rounded-xl px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 hover:text-slate-900"
@@ -468,7 +710,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                         href="/articles"
                         onClick={() => {
                           setMobileMenuOpen(false);
+                          setMobileFeaturesOpen(false);
                           setMobileServicesOpen(false);
+                          setMobilePackagesOpen(false);
                           setMobileTemplatesOpen(false);
                         }}
                         className="block rounded-xl px-3 py-3 text-base font-semibold text-slate-900 transition hover:bg-slate-50"
@@ -488,10 +732,12 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                       </div>
 
                       <Link
-                        href="/#contact"
+                        href="/contact"
                         onClick={() => {
                           setMobileMenuOpen(false);
+                          setMobileFeaturesOpen(false);
                           setMobileServicesOpen(false);
+                          setMobilePackagesOpen(false);
                           setMobileTemplatesOpen(false);
                         }}
                         className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-slate-800"
@@ -514,7 +760,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
             <Globe className="h-4 w-4" />
             {lang === "th" ? "TH" : "EN"}
           </button>
-          <Link href="/#contact" className={ctaClass} aria-label={cta}>
+          <Link href="/contact" className={ctaClass} aria-label={cta}>
             <Phone className="h-4 w-4" />
             <span className="hidden md:inline">{cta}</span>
           </Link>

@@ -1,16 +1,13 @@
 "use client";
-
-import type { FormEvent } from "react";
-import { useEffect, useRef, useState } from "react";
 import {
   ArrowRight,
   Award,
   Briefcase,
-  Globe2,
   Layers,
-  MessageSquare,
+  Globe2,
   ShieldCheck,
   Sparkles,
+  MessageSquare,
   Star,
 } from "lucide-react";
 import Image from "next/image";
@@ -18,7 +15,6 @@ import Link from "next/link";
 import PackageCard from "@/components/PackageCard";
 import ServiceLinks from "@/components/ServiceLinks";
 import { useLang } from "@/components/LangContext";
-import SubmitStatusModal from "@/components/SubmitStatusModal";
 import { getCopy } from "@/lib/i18n";
 
 const featureIcons = [ShieldCheck, Sparkles, Award, Layers];
@@ -26,31 +22,6 @@ const serviceIcons = [Briefcase, Globe2, Star, MessageSquare];
 
 export default function HomePage() {
   const { lang } = useLang();
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [debugRequestId, setDebugRequestId] = useState<string | null>(null);
-  const [submitModal, setSubmitModal] = useState<
-    | { open: false }
-    | {
-        open: true;
-        variant: "sending" | "success" | "error";
-        title: string;
-        message?: string;
-      }
-  >({ open: false });
-  const submitModalTimerRef = useRef<number | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    message: "",
-    company: "",
-    startedAt: null as number | null,
-  });
-  const isDev =
-    typeof window !== "undefined" &&
-    (window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1");
 
   const copy = getCopy(lang);
   const portfolioShowcase = [
@@ -100,10 +71,6 @@ export default function HomePage() {
     lang === "th"
       ? "rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700"
       : "rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-700";
-  const formLabelClass =
-    lang === "th"
-      ? "text-xs font-semibold text-slate-500"
-      : "text-xs uppercase tracking-[0.2em] text-slate-500";
   const ctaPrimaryClass =
     lang === "th"
       ? "inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold text-slate-900 shadow-lg"
@@ -112,10 +79,6 @@ export default function HomePage() {
     lang === "th"
       ? "inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold text-white"
       : "inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white";
-  const submitClass =
-    lang === "th"
-      ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-      : "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
 
   const seoContent =
     lang === "th"
@@ -264,6 +227,7 @@ export default function HomePage() {
           ],
         };
 
+  /*
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status === "loading") return;
@@ -387,8 +351,10 @@ export default function HomePage() {
     };
   }, []);
 
+  */
   return (
     <>
+      {/*
       <SubmitStatusModal
         open={submitModal.open}
         variant={submitModal.open ? submitModal.variant : "sending"}
@@ -397,6 +363,7 @@ export default function HomePage() {
         onClose={() => setSubmitModal({ open: false })}
         closeLabel={lang === "th" ? "ตกลง" : "OK"}
       />
+      */}
       <main id="top">
         <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-slate-900 text-white">
           <div className="absolute -left-32 top-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -411,13 +378,13 @@ export default function HomePage() {
               </h1>
               <p className="text-lg text-blue-100">{copy.hero.subtitle}</p>
               <div className="flex flex-wrap gap-4">
-                <a href="#contact" className={ctaPrimaryClass}>
+                <Link href="/contact" className={ctaPrimaryClass}>
                   {copy.hero.primaryCta}
                   <ArrowRight className="h-4 w-4" />
-                </a>
-                <a href="#package-list" className={ctaSecondaryClass}>
+                </Link>
+                <Link href="/packages" className={ctaSecondaryClass}>
                   {copy.hero.secondaryCta}
-                </a>
+                </Link>
               </div>
               <p className="text-sm text-blue-100">{copy.hero.trust}</p>
             </div>
@@ -495,6 +462,13 @@ export default function HomePage() {
                       ? "/services/company-registration"
                       : null;
 
+              const estimateHref =
+                sectionIndex === 2
+                  ? "/estimate?service=dormitory"
+                  : sectionIndex === 3
+                    ? "/estimate?service=company"
+                    : null;
+
               return (
               <div
                 key={section.h2}
@@ -529,12 +503,16 @@ export default function HomePage() {
                               className={`group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_60px_-40px_rgba(15,23,42,0.55)] transition will-change-transform sm:flex-1 ${tilt} ${lift} ${scale} ${z}`}
                             >
                               <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-white opacity-70" />
-                              <img
-                                src={item.src}
-                                alt={lang === "th" ? item.altTh : item.altEn}
-                                className="relative block h-48 w-full object-contain p-4 sm:h-44"
-                                loading="lazy"
-                              />
+                              <div className="relative m-4 rounded-2xl bg-slate-900/95 p-2 shadow-[0_18px_45px_-35px_rgba(2,6,23,0.9)] ring-1 ring-black/20 sm:h-44">
+                                <div className="flex h-48 items-center justify-center overflow-hidden rounded-xl bg-white sm:h-full">
+                                  <img
+                                    src={item.src}
+                                    alt={lang === "th" ? item.altTh : item.altEn}
+                                    className="h-full w-full object-contain"
+                                    loading="lazy"
+                                  />
+                                </div>
+                              </div>
                             </div>
                           );
                         })}
@@ -573,14 +551,28 @@ export default function HomePage() {
                       ))}
                     </ul>
                   ) : null}
-                  {detailsHref ? (
-                    <Link
-                      href={detailsHref}
-                      className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700"
-                    >
-                      {lang === "th" ? "ดูรายละเอียดบริการ" : "View full service details"}
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
+                  {detailsHref || estimateHref ? (
+                    <div className="flex flex-wrap items-center gap-4">
+                      {detailsHref ? (
+                        <Link
+                          href={detailsHref}
+                          className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700"
+                        >
+                          {lang === "th"
+                            ? "ดูรายละเอียดบริการ"
+                            : "View full service details"}
+                          <ArrowRight className="h-4 w-4" />
+                        </Link>
+                      ) : null}
+                      {estimateHref ? (
+                        <Link
+                          href={estimateHref}
+                          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
+                        >
+                          {lang === "th" ? "ประมาณราคา" : "Estimate"}
+                        </Link>
+                      ) : null}
+                    </div>
                   ) : null}
                 </div>
 
@@ -606,6 +598,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        {false ? (
         <section id="service-landing" className="bg-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -625,7 +618,7 @@ export default function HomePage() {
                 </p>
               </div>
               <Link
-                href="/#contact"
+                href="/contact"
                 className="text-sm font-semibold text-blue-700"
               >
                 {lang === "th" ? "ขอใบเสนอราคา" : "Request a quote"}
@@ -636,6 +629,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        ) : null}
 
         <section id="features" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
@@ -673,6 +667,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        {false ? (
         <section id="services" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -683,13 +678,13 @@ export default function HomePage() {
                 </h2>
                 <p className="mt-3 max-w-xl text-slate-600">{copy.services.subtitle}</p>
               </div>
-              <a
-                href="#contact"
+              <Link
+                href="/contact"
                 className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700"
               >
                 {lang === "th" ? "คุยกับผู้เชี่ยวชาญ" : "Talk to specialists"}
                 <ArrowRight className="h-4 w-4" />
-              </a>
+              </Link>
             </div>
             <div className="mt-10 grid gap-6 md:grid-cols-2">
               {copy.services.items.map((item, index) => {
@@ -709,6 +704,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        ) : null}
         <section id="package-list" className="bg-gradient-to-b from-white to-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -762,6 +758,7 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/*
         <section id="contact" className="bg-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
@@ -942,6 +939,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+        */}
 
         <section id="additional" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">

@@ -10,6 +10,10 @@ export type DormitoryEstimateInputs = {
   modules: string[];
 };
 
+export type CompanyEstimateInputs = {
+  addons: string[];
+};
+
 export type AnalyticsEstimateInputs = {
   channels: number;
   reporting: keyof typeof estimatorConfig.analytics.reportingFrequency;
@@ -19,6 +23,7 @@ export type AnalyticsEstimateInputs = {
 export type EstimateInputs =
   | { service: "website"; data: WebsiteEstimateInputs }
   | { service: "dormitory"; data: DormitoryEstimateInputs }
+  | { service: "company"; data: CompanyEstimateInputs }
   | { service: "analytics"; data: AnalyticsEstimateInputs };
 
 export type EstimateResult = {
@@ -86,6 +91,25 @@ export function calculateEstimate(input: EstimateInputs): EstimateResult {
     };
   }
 
+  if (input.service === "company") {
+    const config = estimatorConfig.company;
+    const selected = input.data.addons || [];
+    const addOnTotal = selected.reduce((sum, key) => {
+      const addOn = config.addons[key as keyof typeof config.addons];
+      return sum + (addOn?.price ?? 0);
+    }, 0);
+    const baseTotal = config.base + addOnTotal;
+    const priceMin = roundTo(baseTotal, 500);
+    const priceMax = roundTo(getMaxFromBuffer(priceMin, config.priceBufferPct), 500);
+    return {
+      priceMin,
+      priceMax,
+      normalizedInputs: {
+        addons: selected,
+      },
+    };
+  }
+
   const config = estimatorConfig.analytics;
   const channels = clamp(
     Math.round(input.data.channels || config.minChannels),
@@ -117,4 +141,4 @@ export function calculateEstimate(input: EstimateInputs): EstimateResult {
 }
 
 export const isEstimatorService = (value: string | null | undefined): value is EstimatorService =>
-  value === "website" || value === "dormitory" || value === "analytics";
+  value === "website" || value === "dormitory" || value === "company" || value === "analytics";

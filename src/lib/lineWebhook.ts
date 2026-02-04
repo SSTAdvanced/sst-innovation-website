@@ -50,9 +50,8 @@ export async function notifyLineViaCloudflare(
   if (!webhookUrl) return "skipped";
 
   if (webhookUrl.includes("/line-callback")) {
-    throw new Error(
-      "CLOUDFLARE_LINE_WEBHOOK_URL is pointing to /line-callback. It must point to your Worker endpoint that receives web notifications (e.g. /webhook)."
-    );
+    // /line-callback is for LINE platform webhooks, not for server-to-worker notifications.
+    return "failed";
   }
 
   const secret = readEnv("CLOUDFLARE_LINE_WEBHOOK_SECRET");

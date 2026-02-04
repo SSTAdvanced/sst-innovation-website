@@ -115,13 +115,13 @@ export default async function ArticlesPage() {
           <p className="max-w-2xl text-base text-slate-600">{data.hero.subtitle}</p>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
               {locale === "th" ? "ขอใบเสนอราคา" : "Request a quote"}
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
             >
               {locale === "th" ? "ปรึกษาฟรี" : "Free consultation"}
@@ -141,7 +141,7 @@ export default async function ArticlesPage() {
                 <h2 className="text-lg font-semibold text-slate-900">{item.title}</h2>
                 <p className="mt-3 text-sm text-slate-600">{item.excerpt}</p>
                 <Link
-                  href="/#contact"
+                  href="/contact"
                   className="mt-4 inline-flex text-sm font-semibold text-blue-700"
                 >
                   {locale === "th" ? "ปรึกษาเพื่อเริ่มต้น" : "Talk to our team"}

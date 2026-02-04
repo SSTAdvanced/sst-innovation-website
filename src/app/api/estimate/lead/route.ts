@@ -17,6 +17,9 @@ type LeadPayload = {
   startedAt?: string | number;
   service?: string;
   estimateId?: string | null;
+  quoteRef?: string;
+  quoteSubtotal?: number;
+  quoteLines?: Array<{ label?: string; amount?: number }>;
   priceMin?: number;
   priceMax?: number;
 };
@@ -72,6 +75,16 @@ export async function POST(req: Request) {
   const now = Date.now();
   const ip = getClientIp(req);
 
+  const runInBackground = (
+    label: string,
+    task: PromiseLike<unknown> | (() => PromiseLike<unknown>)
+  ) => {
+    const promise = typeof task === "function" ? task() : task;
+    Promise.resolve(promise).catch((error) => {
+      console.error(label, { requestId, error });
+    });
+  };
+
   try {
     const body = (await req.json().catch(() => null)) as LeadPayload | null;
 
@@ -99,8 +112,44 @@ export async function POST(req: Request) {
     const startedAt = body?.startedAt;
     const service = isEstimatorService(body?.service) ? body?.service : null;
     const estimateId = body?.estimateId ?? null;
+    const quoteRef =
+      String(body?.quoteRef ?? "")
+        .trim()
+        .toUpperCase()
+        .replace(/[^A-Z0-9-]/g, "")
+        .slice(0, 32) || null;
+    const quoteSubtotal = Number(body?.quoteSubtotal ?? 0) || null;
+    const rawQuoteLines = body && Array.isArray(body.quoteLines) ? body.quoteLines : [];
+    const quoteLines = rawQuoteLines
+      .map((line) => ({
+        label: String(line?.label ?? "").trim().slice(0, 200),
+        amount: Number(line?.amount ?? 0),
+      }))
+      .filter((line) => line.label && Number.isFinite(line.amount) && line.amount > 0)
+      .slice(0, 30);
     const priceMin = Number(body?.priceMin ?? 0) || null;
     const priceMax = Number(body?.priceMax ?? 0) || null;
+
+    const estimateLines: string[] = [
+      "---- Estimate ----",
+      `Service: ${service ?? "-"}`,
+      `Estimate ID: ${estimateId ?? "-"}`,
+      `Quote Ref: ${quoteRef ?? "-"}`,
+      `Subtotal: ${quoteSubtotal ?? "-"}`,
+      `Price range: ${priceMin ?? "-"} - ${priceMax ?? "-"}`,
+    ];
+
+    if (quoteLines.length) {
+      estimateLines.push("", "Items:");
+      for (const line of quoteLines) {
+        estimateLines.push(`- ${line.label}: ${line.amount}`);
+      }
+    }
+
+    const messageWithEstimate = `${message}\n\n${estimateLines.join("\n")}`.slice(
+      0,
+      MAX_MESSAGE_LENGTH
+    );
 
     if (company || isTooFast(startedAt, now)) {
       return NextResponse.json(
@@ -138,7 +187,7 @@ export async function POST(req: Request) {
           name,
           phone,
           email,
-          message,
+          message: messageWithEstimate,
           locale,
           source: "estimate",
           service,
@@ -156,60 +205,66 @@ export async function POST(req: Request) {
       );
     }
 
-    await supabaseAdmin.from("events").insert([
-      {
-        event_name: "lead_submit",
-        service,
-        meta: {
-          estimate_id: estimateId,
-          price_min: priceMin,
-          price_max: priceMax,
-        },
-      },
-    ]);
+    // Run non-critical tasks in the background so the UI doesn't hang waiting for
+    // notifications / analytics insertions.
+    runInBackground(
+      "Lead event insert failed",
+      () =>
+        supabaseAdmin.from("events").insert([
+          {
+            event_name: "lead_submit",
+            service,
+            meta: {
+              estimate_id: estimateId,
+              quote_ref: quoteRef,
+              quote_subtotal: quoteSubtotal,
+              price_min: priceMin,
+              price_max: priceMax,
+              lead_id: lead?.id ?? null,
+            },
+          },
+        ])
+    );
 
-    try {
-      const estimateLine =
-        priceMin && priceMax
-          ? `Estimate range: ${priceMin} - ${priceMax}`
-          : "Estimate range: -";
-      const emailStatus = await sendLeadNotification({
-        name,
-        phone: phone || null,
-        email: email || null,
-        message: `${message}\n${estimateLine}`,
-        locale,
-        source: `estimate:${service ?? "unknown"}`,
-      });
-      if (emailStatus === "skipped") {
-        console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
-      }
-    } catch (emailError) {
-      console.error("Lead email notification failed:", emailError);
-    }
-
-    if (lead?.id) {
-      try {
-        const estimateLine =
-          priceMin && priceMax
-            ? `Estimate range: ${priceMin} - ${priceMax}`
-            : "Estimate range: -";
-        const lineStatus = await notifyLineViaCloudflare({
-          leadId: lead.id,
+    runInBackground(
+      "Lead email notification failed",
+      (async () => {
+        const emailStatus = await sendLeadNotification({
           name,
           phone: phone || null,
           email: email || null,
-          message: `${message}\n${estimateLine}`,
+          message: messageWithEstimate,
           locale,
           source: `estimate:${service ?? "unknown"}`,
-          requestId,
         });
-        if (lineStatus === "skipped") {
-          console.warn("Line webhook notification skipped (missing env)", { requestId });
+        if (emailStatus === "skipped") {
+          console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
         }
-      } catch (lineError) {
-        console.error("Line webhook notification failed", { requestId, lineError });
-      }
+      })()
+    );
+
+    if (lead?.id) {
+      runInBackground(
+        "Line webhook notification failed",
+        (async () => {
+          const lineStatus = await notifyLineViaCloudflare({
+            leadId: lead.id,
+            name,
+            phone: phone || null,
+            email: email || null,
+            message: messageWithEstimate,
+            locale,
+            source: `estimate:${service ?? "unknown"}`,
+            requestId,
+          });
+          if (lineStatus === "skipped") {
+            console.warn("Line webhook notification skipped (missing env)", { requestId });
+          }
+          if (lineStatus === "failed") {
+            console.warn("Line webhook notification failed", { requestId });
+          }
+        })()
+      );
     }
 
     return NextResponse.json({

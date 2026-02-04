@@ -296,7 +296,7 @@ export default async function WebsiteServicePage() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link
-                href="/#contact"
+                href="/contact"
                 className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
               >
                 {data.cta.primary}
@@ -308,7 +308,7 @@ export default async function WebsiteServicePage() {
                 {locale === "th" ? "ประเมินราคา" : "Estimate price"}
               </Link>
               <Link
-                href="/#contact"
+                href="/contact"
                 className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
               >
                 {data.cta.secondary}
@@ -409,13 +409,13 @@ export default async function WebsiteServicePage() {
           </div>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
               {data.cta.primary}
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
             >
               {data.cta.secondary}

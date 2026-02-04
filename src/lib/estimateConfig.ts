@@ -30,6 +30,15 @@ export const estimatorConfig = {
       reporting: { label: "Executive reporting pack", price: 14000 },
     },
   },
+  company: {
+    base: 25000,
+    priceBufferPct: 0.2,
+    addons: {
+      vat: { label: "VAT registration + tax setup", price: 9000 },
+      accounting: { label: "Accounting setup + bookkeeping guidance", price: 15000 },
+      contracts: { label: "Starter contract templates pack", price: 8000 },
+    },
+  },
   analytics: {
     base: 25000,
     perChannel: 7000,

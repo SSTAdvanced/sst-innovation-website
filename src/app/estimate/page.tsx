@@ -11,11 +11,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
   const title =
     locale === "th"
-      ? "Service Estimator | SST INNOVATION"
+      ? "คำนวณช่วงราคาเบื้องต้น | SST INNOVATION"
       : "Service Estimator | SST INNOVATION";
   const description =
     locale === "th"
-      ? "คำนวณช่วงราคาเบื้องต้นแบบ rule-based สำหรับเว็บไซต์ ระบบหอพัก และ analytics"
+      ? "คำนวณช่วงราคาเบื้องต้นแบบ rule-based สำหรับเว็บไซต์ ระบบหอพัก/รีสอร์ท และ analytics"
       : "Rule-based estimator for websites, dormitory systems, and analytics.";
   const baseUrl = SITE_URL.replace(/\/+$/, "");
 
@@ -46,19 +46,19 @@ export default async function EstimatePage({
     : "website";
 
   return (
-    <main className="min-h-screen bg-white text-slate-900">
-      <section className="border-b border-slate-200 bg-mist py-10">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <section className="border-b border-slate-200 bg-gradient-to-b from-white to-mist py-10">
         <div className="mx-auto w-full max-w-6xl space-y-4 px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-600">
             SST INNOVATION
           </p>
           <h1 className="font-[var(--font-heading)] text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            {locale === "th" ? "Service Estimator" : "Service Estimator"}
+            {locale === "th" ? "คำนวณช่วงราคาเบื้องต้น" : "Service Estimator"}
           </h1>
-          <p className="max-w-2xl text-base text-slate-600">
+          <p className="max-w-2xl text-sm text-slate-600 sm:text-base">
             {locale === "th"
-              ? "ประเมินช่วงราคาเบื้องต้นก่อนตัดสินใจ พร้อมส่งข้อมูลเพื่อรับใบเสนอราคา"
-              : "Get a preliminary range and send your details for a tailored quote."}
+              ? "ประเมินช่วงราคาแบบรวดเร็ว และส่งข้อมูลเพื่อรับใบเสนอราคา"
+              : "Get a quick ballpark range and request a tailored quote."}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -68,7 +68,7 @@ export default async function EstimatePage({
               {locale === "th" ? "ดูบริการทั้งหมด" : "View services"}
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
               {locale === "th" ? "ปรึกษาฟรี" : "Free consultation"}
@@ -77,7 +77,7 @@ export default async function EstimatePage({
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="py-14 sm:py-16">
         <div className="mx-auto w-full max-w-6xl px-6">
           <EstimateClient initialService={initialService} locale={locale} />
         </div>

@@ -52,6 +52,17 @@ export async function POST(req: Request) {
           modules,
         },
       } as const;
+    } else if (service === "company") {
+      const config = estimatorConfig.company;
+      const addons = pickKeys(inputs.addons).filter((item) =>
+        Object.keys(config.addons).includes(String(item))
+      );
+      estimateInputs = {
+        service,
+        data: {
+          addons,
+        },
+      } as const;
     } else {
       const config = estimatorConfig.analytics;
       const channels = Number(inputs.channels ?? config.minChannels);

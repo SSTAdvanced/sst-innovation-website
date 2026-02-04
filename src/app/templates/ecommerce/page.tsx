@@ -125,13 +125,13 @@ export default async function EcommerceTemplatesPage() {
           </ul>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
             >
               {content.ctaPrimary}
             </Link>
             <Link
-              href="/#contact"
+              href="/contact"
               className="rounded-full border border-slate-300 bg-white/70 px-5 py-2.5 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-white"
             >
               {content.ctaSecondary}
@@ -176,4 +176,3 @@ export default async function EcommerceTemplatesPage() {
     </main>
   );
 }
-
