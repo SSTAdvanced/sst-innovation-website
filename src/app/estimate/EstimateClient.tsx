@@ -6,6 +6,7 @@ import { estimatorConfig, type EstimatorService } from "@/lib/estimateConfig";
 import { trackGaEvent } from "@/lib/ga";
 import { logEvent } from "@/lib/eventLogger";
 import SubmitStatusModal from "@/components/SubmitStatusModal";
+import { formatLeadRef } from "@/lib/leadRef";
 
 type EstimateResult = {
   estimateId: string | null;
@@ -144,6 +145,7 @@ export default function EstimateClient({
     "idle"
   );
   const [leadError, setLeadError] = useState<string | null>(null);
+  const [leadRef, setLeadRef] = useState<string | null>(null);
   const [leadStartedAt, setLeadStartedAt] = useState<number | null>(null);
   const [leadFormOpen, setLeadFormOpen] = useState(false);
   const [leadForm, setLeadForm] = useState({
@@ -231,6 +233,7 @@ export default function EstimateClient({
     setLeadFormOpen(false);
     setLeadStatus("loading");
     setLeadError(null);
+    setLeadRef(null);
 
     try {
       const response = await fetch("/api/estimate/lead", {
@@ -256,6 +259,7 @@ export default function EstimateClient({
         );
       }
 
+      setLeadRef(formatLeadRef(data?.leadId ?? null));
       // Reset lead fields immediately after a successful submission.
       setLeadForm({ name: "", phone: "", email: "", message: "", company: "" });
       setLeadStartedAt(null);
@@ -1048,6 +1052,7 @@ export default function EstimateClient({
                   : "We received your details. We'll contact you soon."
                 : leadError ?? undefined
           }
+          reference={leadStatus === "success" ? leadRef : null}
           closeLabel={locale === "th" ? "ตกลง" : "OK"}
           onClose={() => {
             if (leadStatus === "success") {
@@ -1059,6 +1064,7 @@ export default function EstimateClient({
             }
             setLeadStatus("idle");
             setLeadError(null);
+            setLeadRef(null);
           }}
         />
 

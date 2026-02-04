@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import SubmitStatusModal from "@/components/SubmitStatusModal";
 import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
+import { formatLeadRef } from "@/lib/leadRef";
 
 export default function ContactPageClient() {
   const { lang } = useLang();
@@ -13,6 +14,7 @@ export default function ContactPageClient() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [debugRequestId, setDebugRequestId] = useState<string | null>(null);
+  const [leadRef, setLeadRef] = useState<string | null>(null);
   const [submitModal, setSubmitModal] = useState<
     | { open: false }
     | {
@@ -51,6 +53,7 @@ export default function ContactPageClient() {
     setStatus("loading");
     setErrorMessage(null);
     setDebugRequestId(null);
+    setLeadRef(null);
     setSubmitModal({
       open: true,
       variant: "sending",
@@ -73,6 +76,7 @@ export default function ContactPageClient() {
       }
 
       setStatus("success");
+      setLeadRef(formatLeadRef(data?.leadId ?? null));
       setSubmitModal({
         open: true,
         variant: "success",
@@ -118,6 +122,7 @@ export default function ContactPageClient() {
         setStatus("idle");
         setErrorMessage(null);
         setDebugRequestId(null);
+        setLeadRef(null);
         submitModalTimerRef.current = null;
       }, 3500);
       return;
@@ -307,6 +312,7 @@ export default function ContactPageClient() {
         variant={submitModal.open ? submitModal.variant : "sending"}
         title={submitModal.open ? submitModal.title : ""}
         message={submitModal.open ? submitModal.message : undefined}
+        reference={submitModal.open && submitModal.variant === "success" ? leadRef : null}
         closeLabel={lang === "th" ? "ตกลง" : "OK"}
         onClose={() => setSubmitModal({ open: false })}
       />

@@ -1,5 +1,7 @@
 import "server-only";
 
+import { formatLeadRef } from "@/lib/leadRef";
+
 export type LeadNotifyStatus = "sent" | "skipped" | "failed";
 
 export type LeadNotificationPayload = {
@@ -28,19 +30,21 @@ function readEnv(name: string): string | null {
 }
 
 function formatText(payload: LeadNotificationPayload) {
+  const leadRef = formatLeadRef(payload.leadId);
   const lines = [
-    "New lead (SST INNOVATION)",
+    "🚀 New lead (SST INNOVATION)",
+    leadRef ? `Ref: ${leadRef}` : null,
     `Name: ${payload.name}`,
     `Phone: ${payload.phone || "-"}`,
     `Email: ${payload.email || "-"}`,
-    `Locale: ${payload.locale}`,
     `Source: ${payload.source}`,
-    `Lead ID: ${payload.leadId}`,
+    `Locale: ${payload.locale}`,
     `Request ID: ${payload.requestId}`,
     "",
+    "Message:",
     payload.message,
   ];
-  return lines.join("\n");
+  return lines.filter(Boolean).join("\n");
 }
 
 export async function notifyLineViaCloudflare(

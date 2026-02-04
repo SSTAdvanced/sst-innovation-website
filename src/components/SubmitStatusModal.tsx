@@ -7,6 +7,7 @@ type SubmitStatusModalProps = {
   variant: "sending" | "success" | "error";
   title: string;
   message?: string;
+  reference?: string | null;
   onClose?: () => void;
   closeLabel?: string;
 };
@@ -16,6 +17,7 @@ export default function SubmitStatusModal({
   variant,
   title,
   message,
+  reference,
   onClose,
   closeLabel = "OK",
 }: SubmitStatusModalProps) {
@@ -68,6 +70,15 @@ export default function SubmitStatusModal({
           <p className="mt-3 text-base font-semibold leading-snug text-slate-900">{title}</p>
           {message ? (
             <p className="mt-1 text-sm leading-relaxed text-slate-600">{message}</p>
+          ) : null}
+
+          {reference && !isSending ? (
+            <div className="mt-3 flex justify-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700">
+                <span className="text-slate-500">Ref</span>
+                <span className="font-mono tracking-[0.1em]">{reference}</span>
+              </div>
+            </div>
           ) : null}
 
           {!isSending ? (
