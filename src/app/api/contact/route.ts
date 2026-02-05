@@ -148,25 +148,16 @@ export async function POST(req: Request) {
     let emailStatus: "sent" | "skipped" | "failed" = "skipped";
     let lineStatus: "sent" | "skipped" | "failed" = "skipped";
 
-    try {
-      emailStatus = await sendLeadNotification({
+    const [emailResult, lineResult] = await Promise.allSettled([
+      sendLeadNotification({
         name,
         phone: phone || null,
         email: email || null,
         message,
         locale,
         source: "website",
-      });
-      if (emailStatus === "skipped") {
-        console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
-      }
-    } catch (error) {
-      emailStatus = "failed";
-      console.error("Lead email notification failed", { requestId, error });
-    }
-
-    try {
-      lineStatus = await notifyLineViaCloudflare({
+      }),
+      notifyLineViaCloudflare({
         leadId: lead.id,
         name,
         phone: phone || null,
@@ -175,13 +166,33 @@ export async function POST(req: Request) {
         locale,
         source: "website",
         requestId,
+      }),
+    ]);
+
+    if (emailResult.status === "fulfilled") {
+      emailStatus = emailResult.value;
+      if (emailStatus === "skipped") {
+        console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
+      }
+    } else {
+      emailStatus = "failed";
+      console.error("Lead email notification failed", {
+        requestId,
+        error: emailResult.reason,
       });
+    }
+
+    if (lineResult.status === "fulfilled") {
+      lineStatus = lineResult.value;
       if (lineStatus === "skipped") {
         console.warn("Line webhook notification skipped (missing env)", { requestId });
       }
-    } catch (error) {
+    } else {
       lineStatus = "failed";
-      console.error("Line webhook notification failed", { requestId, error });
+      console.error("Line webhook notification failed", {
+        requestId,
+        error: lineResult.reason,
+      });
     }
 
     // Record notification status in events table (if present)

@@ -74,8 +74,8 @@ export function calculateEstimate(input: EstimateInputs): EstimateResult {
     const tier = config.roomTiers.find((entry) => rooms <= entry.upTo);
     const tierAdd = tier ? tier.add : config.roomTiers[config.roomTiers.length - 1].add;
     const moduleTotal = selected.reduce((sum, key) => {
-      const module = config.modules[key as keyof typeof config.modules];
-      return sum + (module?.price ?? 0);
+      const moduleConfig = config.modules[key as keyof typeof config.modules];
+      return sum + (moduleConfig?.price ?? 0);
     }, 0);
     const baseTotal = config.base + tierAdd + moduleTotal;
     const priceMin = roundTo(baseTotal, 500);

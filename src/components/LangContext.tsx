@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { createContext, useContext, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Lang } from "@/lib/i18n";
 
@@ -27,19 +27,22 @@ export function LangProvider({
   const router = useRouter();
   const [lang, setLangState] = useState<Lang>(initialLang);
 
-  const setLang = (next: Lang) => {
+  const setLang = useCallback(
+    (next: Lang) => {
     setLangState(next);
     setLangCookie(next);
     router.refresh();
-  };
+    },
+    [router]
+  );
 
-  const toggleLang = () => {
+  const toggleLang = useCallback(() => {
     setLang(lang === "th" ? "en" : "th");
-  };
+  }, [lang, setLang]);
 
   const value = useMemo<LangContextValue>(
     () => ({ lang, setLang, toggleLang }),
-    [lang]
+    [lang, setLang, toggleLang]
   );
 
   return <LangContext.Provider value={value}>{children}</LangContext.Provider>;
@@ -52,4 +55,3 @@ export function useLang() {
   }
   return ctx;
 }
-

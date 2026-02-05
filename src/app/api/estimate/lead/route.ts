@@ -199,42 +199,53 @@ export async function POST(req: Request) {
     let emailStatus: "sent" | "skipped" | "failed" = "skipped";
     let lineStatus: "sent" | "skipped" | "failed" = "skipped";
 
-    try {
-      emailStatus = await sendLeadNotification({
+    const [emailResult, lineResult] = await Promise.allSettled([
+      sendLeadNotification({
         name,
         phone: phone || null,
         email: email || null,
         message: messageWithEstimate,
         locale,
         source: `estimate:${service ?? "unknown"}`,
-      });
+      }),
+      lead?.id
+        ? notifyLineViaCloudflare({
+            leadId: lead.id,
+            name,
+            phone: phone || null,
+            email: email || null,
+            message: messageWithEstimate,
+            locale,
+            source: `estimate:${service ?? "unknown"}`,
+            requestId,
+          })
+        : Promise.resolve("skipped" as const),
+    ]);
+
+    if (emailResult.status === "fulfilled") {
+      emailStatus = emailResult.value;
       if (emailStatus === "skipped") {
         console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
       }
-    } catch (notifyError) {
+    } else {
       emailStatus = "failed";
-      console.error("Lead email notification failed", { requestId, error: notifyError });
+      console.error("Lead email notification failed", {
+        requestId,
+        error: emailResult.reason,
+      });
     }
 
-    if (lead?.id) {
-      try {
-        lineStatus = await notifyLineViaCloudflare({
-          leadId: lead.id,
-          name,
-          phone: phone || null,
-          email: email || null,
-          message: messageWithEstimate,
-          locale,
-          source: `estimate:${service ?? "unknown"}`,
-          requestId,
-        });
-        if (lineStatus === "skipped") {
-          console.warn("Line webhook notification skipped (missing env)", { requestId });
-        }
-      } catch (notifyError) {
-        lineStatus = "failed";
-        console.error("Line webhook notification failed", { requestId, error: notifyError });
+    if (lineResult.status === "fulfilled") {
+      lineStatus = lineResult.value;
+      if (lineStatus === "skipped") {
+        console.warn("Line webhook notification skipped (missing env)", { requestId });
       }
+    } else {
+      lineStatus = "failed";
+      console.error("Line webhook notification failed", {
+        requestId,
+        error: lineResult.reason,
+      });
     }
 
     // Record event/notification status (best-effort)

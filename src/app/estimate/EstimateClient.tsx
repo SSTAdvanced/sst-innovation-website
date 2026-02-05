@@ -146,7 +146,6 @@ export default function EstimateClient({
   );
   const [leadError, setLeadError] = useState<string | null>(null);
   const [leadRef, setLeadRef] = useState<string | null>(null);
-  const [leadNotifySummary, setLeadNotifySummary] = useState<string | null>(null);
   const [leadStartedAt, setLeadStartedAt] = useState<number | null>(null);
   const [leadFormOpen, setLeadFormOpen] = useState(false);
   const [leadForm, setLeadForm] = useState({
@@ -235,7 +234,6 @@ export default function EstimateClient({
     setLeadStatus("loading");
     setLeadError(null);
     setLeadRef(null);
-    setLeadNotifySummary(null);
 
     try {
       const response = await fetch("/api/estimate/lead", {
@@ -262,32 +260,6 @@ export default function EstimateClient({
       }
 
       setLeadRef(formatLeadRef(data?.leadId ?? null));
-      const notifyLine = data?.notifications?.line;
-      const notifyEmail = data?.notifications?.email;
-      const formatNotifyStatus = (value: unknown) => {
-        const v = typeof value === "string" ? value : "";
-        if (locale === "th") {
-          if (v === "sent") return "ส่งแล้ว";
-          if (v === "failed") return "ส่งไม่สำเร็จ";
-          if (v === "skipped") return "ยังไม่ได้ตั้งค่า";
-          return "ไม่ทราบสถานะ";
-        }
-        if (v === "sent") return "Sent";
-        if (v === "failed") return "Failed";
-        if (v === "skipped") return "Not configured";
-        return "Unknown";
-      };
-      if (notifyLine || notifyEmail) {
-        setLeadNotifySummary(
-          locale === "th"
-            ? `การแจ้งเตือน: LINE = ${formatNotifyStatus(notifyLine)} • Email = ${formatNotifyStatus(
-                notifyEmail
-              )}`
-            : `Notifications: LINE = ${formatNotifyStatus(
-                notifyLine
-              )} • Email = ${formatNotifyStatus(notifyEmail)}`
-        );
-      }
       // Reset lead fields immediately after a successful submission.
       setLeadForm({ name: "", phone: "", email: "", message: "", company: "" });
       setLeadStartedAt(null);
@@ -396,13 +368,13 @@ export default function EstimateClient({
       ];
 
       dormitoryInputs.modules.forEach((key) => {
-        const module = config.modules[key as keyof typeof config.modules];
-        if (!module) {
+        const moduleConfig = config.modules[key as keyof typeof config.modules];
+        if (!moduleConfig) {
           return;
         }
         lines.push({
-          label: getDormitoryModuleLabel(key, module.label),
-          amount: module.price,
+          label: getDormitoryModuleLabel(key, moduleConfig.label),
+          amount: moduleConfig.price,
         });
       });
 
@@ -1076,12 +1048,8 @@ export default function EstimateClient({
                 : "Please wait..."
               : leadStatus === "success"
                 ? locale === "th"
-                  ? ["เราได้รับข้อมูลแล้ว ทีมงานจะติดต่อกลับโดยเร็วที่สุด", leadNotifySummary]
-                      .filter(Boolean)
-                      .join("\n")
-                  : ["We received your details. We'll contact you soon.", leadNotifySummary]
-                      .filter(Boolean)
-                      .join("\n")
+                  ? "เราได้รับข้อมูลแล้ว ทีมงานจะติดต่อกลับโดยเร็วที่สุด"
+                  : "We received your details. We'll contact you soon."
                 : leadError ?? undefined
           }
           reference={leadStatus === "success" ? leadRef : null}
@@ -1097,7 +1065,6 @@ export default function EstimateClient({
             setLeadStatus("idle");
             setLeadError(null);
             setLeadRef(null);
-            setLeadNotifySummary(null);
           }}
         />
 
