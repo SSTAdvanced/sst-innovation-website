@@ -7,6 +7,9 @@
   --primary-dark: #1e3a8a;
   --surface: #ffffff;
   --border: #e2e8f0;
+  --font-body: "Noto Sans Thai", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    "Helvetica Neue", Arial, sans-serif;
+  --font-heading: "Noto Serif Thai", ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @theme inline {

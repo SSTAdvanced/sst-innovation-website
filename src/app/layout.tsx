@@ -1,22 +1,9 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
 import Analytics from "@/components/Analytics";
 import SiteShell from "@/components/SiteShell";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale, type Locale } from "@/lib/locale";
 import "./globals.css";
-
-const bodyFont = Noto_Sans_Thai({
-  variable: "--font-body",
-  subsets: ["thai", "latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-const headingFont = Noto_Serif_Thai({
-  variable: "--font-heading",
-  subsets: ["thai", "latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://websst.vercel.app";
 
@@ -86,7 +73,15 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${bodyFont.variable} ${headingFont.variable} antialiased`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body className="antialiased">
         <StructuredData locale={locale} includeGlobal />
         <Analytics />
         <SiteShell initialLang={locale}>{children}</SiteShell>

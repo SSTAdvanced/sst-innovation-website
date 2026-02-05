@@ -34,7 +34,7 @@ const servicesByLocale = {
       description:
         "ดูแลตั้งแต่การวางโครงสร้างธุรกิจ เอกสาร ไปจนถึงการยื่นจดทะเบียนอย่างถูกต้อง",
       href: "/services/company-registration",
-      estimateHref: null,
+      estimateHref: "/estimate?service=company",
     },
   ],
   en: [
@@ -60,7 +60,7 @@ const servicesByLocale = {
       description:
         "Guided setup, documentation, and registration support to launch with confidence.",
       href: "/services/company-registration",
-      estimateHref: null,
+      estimateHref: "/estimate?service=company",
     },
   ],
 } as const;

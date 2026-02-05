@@ -55,7 +55,7 @@ export default function Footer({
             {company}
           </p>
           <p className="mt-3 max-w-md text-sm text-slate-400">{note}</p>
-          <div className="mt-5 flex items-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             {facebookHref ? (
               <a
                 href={facebookHref}
@@ -95,7 +95,15 @@ export default function Footer({
               >
                 <LineIcon className="h-5 w-5" />
               </a>
-            ) : null}
+            ) : (
+              <div
+                aria-label="LINE"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 opacity-60"
+                title="LINE ID not found"
+              >
+                <LineIcon className="h-5 w-5" />
+              </div>
+            )}
           </div>
         </div>
         <div className="space-y-3 text-sm text-slate-300">

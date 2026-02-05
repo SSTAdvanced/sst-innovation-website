@@ -459,8 +459,8 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                   className="fixed inset-0 bg-slate-950/55 backdrop-blur-[2px]"
                 />
 
-                <div className="fixed inset-y-0 right-0 h-[100dvh] w-full bg-white shadow-2xl ring-1 ring-black/10 sm:w-[20rem] sm:max-w-[85vw] sm:rounded-l-3xl">
-                  <div className="flex min-h-14 items-center justify-between border-b border-slate-200 px-4 pt-[env(safe-area-inset-top)]">
+                <div className="fixed inset-y-0 right-0 flex h-[100dvh] w-full flex-col bg-white shadow-2xl ring-1 ring-black/10 sm:w-[20rem] sm:max-w-[85vw] sm:rounded-l-3xl">
+                  <div className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 pt-[calc(env(safe-area-inset-top)+0.75rem)] backdrop-blur">
                     <p className="text-sm font-semibold text-slate-900">{t.menu}</p>
                     <button
                       type="button"
@@ -478,7 +478,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                     </button>
                   </div>
 
-                  <div className="h-[calc(100dvh-3.5rem)] overflow-y-auto px-4 py-4 pb-[env(safe-area-inset-bottom)]">
+                  <div className="flex-1 overflow-y-auto px-4 py-4 pb-[calc(env(safe-area-inset-bottom)+1rem)]">
                     <div className="space-y-1">
                       <Link
                         href="/#top"

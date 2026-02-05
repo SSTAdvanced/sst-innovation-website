@@ -13,7 +13,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import PackageCard from "@/components/PackageCard";
-import ServiceLinks from "@/components/ServiceLinks";
 import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
 
@@ -510,6 +509,8 @@ export default function HomePage() {
                                     alt={lang === "th" ? item.altTh : item.altEn}
                                     className="h-full w-full object-contain"
                                     loading="lazy"
+                                    decoding="async"
+                                    fetchPriority="low"
                                   />
                                 </div>
                               </div>
@@ -598,7 +599,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {false ? (
+        {/*
         <section id="service-landing" className="bg-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -629,7 +630,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        ) : null}
+        */}
 
         <section id="features" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
@@ -667,7 +668,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {false ? (
+        {/*
         <section id="services" className="bg-white py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -704,7 +705,7 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        ) : null}
+        */}
         <section id="package-list" className="bg-gradient-to-b from-white to-mist py-20">
           <div className="mx-auto w-full max-w-6xl px-6">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -751,6 +752,8 @@ export default function HomePage() {
                     alt={lang === "th" ? item.altTh : item.altEn}
                     className="block h-56 w-full object-cover sm:h-60 md:h-56"
                     loading="lazy"
+                    decoding="async"
+                    fetchPriority="low"
                   />
                 </div>
               ))}
