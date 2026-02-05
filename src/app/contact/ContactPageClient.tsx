@@ -48,6 +48,20 @@ export default function ContactPageClient() {
       ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
       : "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
 
+  const formatNotifyStatus = (value: unknown) => {
+    const v = typeof value === "string" ? value : "";
+    if (lang === "th") {
+      if (v === "sent") return "ส่งแล้ว";
+      if (v === "failed") return "ส่งไม่สำเร็จ";
+      if (v === "skipped") return "ยังไม่ได้ตั้งค่า";
+      return "ไม่ทราบสถานะ";
+    }
+    if (v === "sent") return "Sent";
+    if (v === "failed") return "Failed";
+    if (v === "skipped") return "Not configured";
+    return "Unknown";
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus("loading");
@@ -77,11 +91,23 @@ export default function ContactPageClient() {
 
       setStatus("success");
       setLeadRef(formatLeadRef(data?.leadId ?? null));
+      const notifyLine = data?.notifications?.line;
+      const notifyEmail = data?.notifications?.email;
+      const notifySummary =
+        notifyLine || notifyEmail
+          ? lang === "th"
+            ? `การแจ้งเตือน: LINE = ${formatNotifyStatus(notifyLine)} • Email = ${formatNotifyStatus(
+                notifyEmail
+              )}`
+            : `Notifications: LINE = ${formatNotifyStatus(
+                notifyLine
+              )} • Email = ${formatNotifyStatus(notifyEmail)}`
+          : null;
       setSubmitModal({
         open: true,
         variant: "success",
         title: lang === "th" ? "ส่งสำเร็จ" : "Sent successfully",
-        message: copy.contact.success,
+        message: [copy.contact.success, notifySummary].filter(Boolean).join("\n"),
       });
 
       setFormData({

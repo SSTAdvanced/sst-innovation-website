@@ -29,10 +29,9 @@ function readEnv(name: string): string | null {
   return unquoted || null;
 }
 
-function formatText(payload: LeadNotificationPayload) {
-  const leadRef = formatLeadRef(payload.leadId);
+function formatText(payload: LeadNotificationPayload, leadRef: string | null) {
   const lines = [
-    "🚀 New lead (SST INNOVATION)",
+    "New lead — SST INNOVATION",
     leadRef ? `Ref: ${leadRef}` : null,
     `Name: ${payload.name}`,
     `Phone: ${payload.phone || "-"}`,
@@ -47,34 +46,65 @@ function formatText(payload: LeadNotificationPayload) {
   return lines.filter(Boolean).join("\n");
 }
 
+function buildWebhookCandidates(rawUrl: string): string[] {
+  const trimmed = rawUrl.trim().replace(/\/+$/, "");
+  const candidates = new Set<string>([trimmed]);
+
+  // Some setups use a single Worker for both LINE platform webhooks and server-to-worker notifications.
+  // Prefer /webhook when we can infer it, but keep compatibility with /line-callback.
+  if (trimmed.endsWith("/line-callback")) {
+    candidates.add(trimmed.replace(/\/line-callback$/, "/webhook"));
+  } else if (trimmed.endsWith("/webhook")) {
+    candidates.add(trimmed.replace(/\/webhook$/, "/line-callback"));
+  }
+
+  return Array.from(candidates);
+}
+
 export async function notifyLineViaCloudflare(
   payload: LeadNotificationPayload
 ): Promise<LeadNotifyStatus> {
   const webhookUrl = readEnv("CLOUDFLARE_LINE_WEBHOOK_URL");
   if (!webhookUrl) return "skipped";
 
-  if (webhookUrl.includes("/line-callback")) {
-    // /line-callback is for LINE platform webhooks, not for server-to-worker notifications.
+  try {
+    // eslint-disable-next-line no-new
+    new URL(webhookUrl);
+  } catch {
     return "failed";
   }
 
   const secret = readEnv("CLOUDFLARE_LINE_WEBHOOK_SECRET");
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8500);
+  const leadRef = formatLeadRef(payload.leadId);
 
-  try {
-    const body = JSON.stringify({
-      type: "lead",
-      text: formatText(payload),
-      payload,
-    });
-    const headers: Record<string, string> = {
-      "content-type": "application/json",
-    };
-    if (secret) headers["x-webhook-secret"] = secret;
+  const headers: Record<string, string> = {
+    "content-type": "application/json",
+  };
+  if (secret) headers["x-webhook-secret"] = secret;
 
-    const attempt = async () => {
-      const res = await fetch(webhookUrl, {
+  const body = JSON.stringify({
+    type: "lead",
+    text: formatText(payload, leadRef),
+    // Keep this minimal (avoid raw UUID) to reduce noise if Worker logs/echoes payload.
+    payload: {
+      ref: leadRef,
+      name: payload.name,
+      phone: payload.phone ?? null,
+      email: payload.email ?? null,
+      message: payload.message,
+      locale: payload.locale,
+      source: payload.source,
+      requestId: payload.requestId,
+      createdAt: payload.createdAt ?? null,
+    },
+  });
+
+  const attempt = async (targetUrl: string, timeoutMs: number) => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(targetUrl, {
         method: "POST",
         headers,
         body,
@@ -84,18 +114,36 @@ export async function notifyLineViaCloudflare(
         const text = await res.text().catch(() => "");
         throw new Error(`Cloudflare webhook failed: ${res.status} ${text}`.trim());
       }
-    };
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
 
+  const targets = buildWebhookCandidates(webhookUrl);
+  const errors: unknown[] = [];
+
+  for (const target of targets) {
     try {
-      await attempt();
-    } catch {
-      // one retry for transient network/worker cold start
-      await new Promise((r) => setTimeout(r, 400));
-      await attempt();
+      await attempt(target, 6000);
+      return "sent";
+    } catch (error) {
+      errors.push(error);
     }
 
-    return "sent";
-  } finally {
-    clearTimeout(timeout);
+    // One retry (worker cold start / transient network)
+    await new Promise((r) => setTimeout(r, 300));
+    try {
+      await attempt(target, 6000);
+      return "sent";
+    } catch (error) {
+      errors.push(error);
+    }
   }
+
+  if (errors.length) {
+    return "failed";
+  }
+
+  return "failed";
 }
+

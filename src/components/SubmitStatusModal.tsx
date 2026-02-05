@@ -42,8 +42,8 @@ export default function SubmitStatusModal({
         : "bg-rose-50 ring-rose-100";
 
   return (
-    <div 
-     className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8"
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center px-4 py-8"
       role="dialog"
       aria-modal="true"
       aria-live={isSending ? "polite" : "assertive"}
@@ -69,7 +69,9 @@ export default function SubmitStatusModal({
 
           <p className="mt-3 text-base font-semibold leading-snug text-slate-900">{title}</p>
           {message ? (
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">{message}</p>
+            <p className="mt-1 whitespace-pre-line text-sm leading-relaxed text-slate-600">
+              {message}
+            </p>
           ) : null}
 
           {reference && !isSending ? (

@@ -75,16 +75,6 @@ export async function POST(req: Request) {
   const now = Date.now();
   const ip = getClientIp(req);
 
-  const runInBackground = (
-    label: string,
-    task: PromiseLike<unknown> | (() => PromiseLike<unknown>)
-  ) => {
-    const promise = typeof task === "function" ? task() : task;
-    Promise.resolve(promise).catch((error) => {
-      console.error(label, { requestId, error });
-    });
-  };
-
   try {
     const body = (await req.json().catch(() => null)) as LeadPayload | null;
 
@@ -185,8 +175,8 @@ export async function POST(req: Request) {
       .insert([
         {
           name,
-          phone,
-          email,
+          phone: phone || null,
+          email: email || null,
           message: messageWithEstimate,
           locale,
           source: "estimate",
@@ -205,73 +195,82 @@ export async function POST(req: Request) {
       );
     }
 
-    // Run non-critical tasks in the background so the UI doesn't hang waiting for
-    // notifications / analytics insertions.
-    runInBackground(
-      "Lead event insert failed",
-      () =>
-        supabaseAdmin.from("events").insert([
-          {
-            event_name: "lead_submit",
-            service,
-            meta: {
-              estimate_id: estimateId,
-              quote_ref: quoteRef,
-              quote_subtotal: quoteSubtotal,
-              price_min: priceMin,
-              price_max: priceMax,
-              lead_id: lead?.id ?? null,
-            },
-          },
-        ])
-    );
+    // Notifications are awaited so they reliably run in Vercel serverless (background tasks may be cut off).
+    let emailStatus: "sent" | "skipped" | "failed" = "skipped";
+    let lineStatus: "sent" | "skipped" | "failed" = "skipped";
 
-    runInBackground(
-      "Lead email notification failed",
-      (async () => {
-        const emailStatus = await sendLeadNotification({
+    try {
+      emailStatus = await sendLeadNotification({
+        name,
+        phone: phone || null,
+        email: email || null,
+        message: messageWithEstimate,
+        locale,
+        source: `estimate:${service ?? "unknown"}`,
+      });
+      if (emailStatus === "skipped") {
+        console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
+      }
+    } catch (notifyError) {
+      emailStatus = "failed";
+      console.error("Lead email notification failed", { requestId, error: notifyError });
+    }
+
+    if (lead?.id) {
+      try {
+        lineStatus = await notifyLineViaCloudflare({
+          leadId: lead.id,
           name,
           phone: phone || null,
           email: email || null,
           message: messageWithEstimate,
           locale,
           source: `estimate:${service ?? "unknown"}`,
+          requestId,
         });
-        if (emailStatus === "skipped") {
-          console.warn("Lead email notification skipped (missing SMTP env)", { requestId });
+        if (lineStatus === "skipped") {
+          console.warn("Line webhook notification skipped (missing env)", { requestId });
         }
-      })()
-    );
+      } catch (notifyError) {
+        lineStatus = "failed";
+        console.error("Line webhook notification failed", { requestId, error: notifyError });
+      }
+    }
 
-    if (lead?.id) {
-      runInBackground(
-        "Line webhook notification failed",
-        (async () => {
-          const lineStatus = await notifyLineViaCloudflare({
-            leadId: lead.id,
-            name,
-            phone: phone || null,
-            email: email || null,
-            message: messageWithEstimate,
-            locale,
+    // Record event/notification status (best-effort)
+    try {
+      await supabaseAdmin.from("events").insert([
+        {
+          event_name: "lead_submit",
+          service,
+          meta: {
+            estimate_id: estimateId,
+            quote_ref: quoteRef,
+            quote_subtotal: quoteSubtotal,
+            price_min: priceMin,
+            price_max: priceMax,
+            lead_id: lead?.id ?? null,
+          },
+        },
+        {
+          event_name: "lead_notify",
+          meta: {
+            lead_id: lead?.id ?? null,
             source: `estimate:${service ?? "unknown"}`,
-            requestId,
-          });
-          if (lineStatus === "skipped") {
-            console.warn("Line webhook notification skipped (missing env)", { requestId });
-          }
-          if (lineStatus === "failed") {
-            console.warn("Line webhook notification failed", { requestId });
-          }
-        })()
-      );
+            email_status: emailStatus,
+            line_status: lineStatus,
+          },
+        },
+      ]);
+    } catch {
+      // ignore
     }
 
     return NextResponse.json({
       ok: true,
       requestId,
       leadId: lead?.id ?? null,
-      // Note: statuses for this endpoint are logged; caller UI does not depend on them.
+      notifications: { email: emailStatus, line: lineStatus },
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
