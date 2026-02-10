@@ -467,19 +467,15 @@ export default function HomePage() {
                 <div className={illustration ? "space-y-6" : undefined}>
                   {sectionIndex === 1 ? (
                     <div className="mb-10 md:mb-12">
-                      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-50 via-blue-50/70 to-cyan-50/70 p-3 shadow-[0_28px_70px_-46px_rgba(15,23,42,0.58)] sm:p-4">
-                        <div className="pointer-events-none absolute -top-16 -right-8 h-36 w-36 rounded-full bg-blue-200/30 blur-3xl" />
-                        <div className="pointer-events-none absolute -bottom-16 -left-8 h-36 w-36 rounded-full bg-cyan-200/30 blur-3xl" />
-                        <div className="relative overflow-hidden rounded-[1.5rem] bg-white/95 shadow-[0_18px_44px_-34px_rgba(2,6,23,0.7)] ring-1 ring-white/70">
-                          <Image
-                            src={servicesShowcase.src}
-                            alt={lang === "th" ? servicesShowcase.altTh : servicesShowcase.altEn}
-                            width={1400}
-                            height={560}
-                            className="h-auto w-full object-cover"
-                            priority
-                          />
-                        </div>
+                      <div className="relative">
+                        <Image
+                          src={servicesShowcase.src}
+                          alt={lang === "th" ? servicesShowcase.altTh : servicesShowcase.altEn}
+                          width={1400}
+                          height={560}
+                          className="h-auto w-full object-cover"
+                          priority
+                        />
                       </div>
                     </div>
                   ) : null}
