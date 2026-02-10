@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, Globe, Menu, Phone, X } from "lucide-react";
+import { ChevronDown, Menu, Phone, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
@@ -29,6 +29,12 @@ type NavbarProps = {
 };
 
 export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps) {
+  const langCode = lang === "th" ? "TH" : "EN";
+  const langFlagSrc =
+    lang === "th"
+      ? "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/pngtree-spherical-thailand-flag-png-image_3510746.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3BuZ3RyZWUtc3BoZXJpY2FsLXRoYWlsYW5kLWZsYWctcG5nLWltYWdlXzM1MTA3NDYuanBnIiwiaWF0IjoxNzcwNzQ2NTA2LCJleHAiOjE4MDIyODI1MDZ9.qt45pLITCBp9F2YaRCrcPF2bKnq6JplnXBuXaJR-nDM"
+      : "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/depositphotos_490775414-stock-illustration-britain-british-flag-icon-flat.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL2RlcG9zaXRwaG90b3NfNDkwNzc1NDE0LXN0b2NrLWlsbHVzdHJhdGlvbi1icml0YWluLWJyaXRpc2gtZmxhZy1pY29uLWZsYXQuanBnIiwiaWF0IjoxNzcwNzQ2NDYyLCJleHAiOjE4MDIyODI0NjJ9.qBpNdHVUH7t1X0oGgjGF6ZsSUovgwZPtTVIGIPW_khc";
+  const langFlagAlt = lang === "th" ? "Thailand flag" : "UK flag";
   const featuresOverviewLabel = lang === "th" ? "จุดเด่นโดยรวม" : "Highlights overview";
   const featuresSeoAiLabel = "SEO AI";
 
@@ -725,9 +731,17 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                         <button
                           type="button"
                           onClick={onToggleLang}
-                          className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
+                          className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
                         >
-                          {lang === "th" ? "TH" : "EN"}
+                          <Image
+                            src={langFlagSrc}
+                            alt={langFlagAlt}
+                            width={16}
+                            height={16}
+                            className="h-4 w-4 rounded-full object-cover"
+                            unoptimized
+                          />
+                          {langCode}
                         </button>
                       </div>
 
@@ -757,8 +771,15 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
             onClick={onToggleLang}
             className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
           >
-            <Globe className="h-4 w-4" />
-            {lang === "th" ? "TH" : "EN"}
+            <Image
+              src={langFlagSrc}
+              alt={langFlagAlt}
+              width={16}
+              height={16}
+              className="h-4 w-4 rounded-full object-cover"
+              unoptimized
+            />
+            {langCode}
           </button>
           <Link href="/contact" className={ctaClass} aria-label={cta}>
             <Phone className="h-4 w-4" />

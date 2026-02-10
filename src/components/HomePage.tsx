@@ -36,23 +36,11 @@ export default function HomePage() {
     },
   ] as const;
 
-  const websiteShowcase = [
-    {
-      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/well-1024x1024.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3dlbGwtMTAyNHgxMDI0LmpwZyIsImlhdCI6MTc2OTYyNzMzNSwiZXhwIjoxODAxMTYzMzM1fQ.59e1hhpP0j0Akxrp0vAtBWyo8MLmnJ-_OMHt3oFEdk4",
-      altTh: "ตัวอย่างเว็บไซต์องค์กร 1",
-      altEn: "Corporate website example 1",
-    },
-    {
-      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/smdp-1024x1024.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3NtZHAtMTAyNHgxMDI0LmpwZyIsImlhdCI6MTc2OTYyNzM1MSwiZXhwIjoxODAxMTYzMzUxfQ.MJE6p8rZaAm3-IgwDTu_2rEtLIhXcidrQw0IF4qjXn4",
-      altTh: "ตัวอย่างเว็บไซต์องค์กร 2",
-      altEn: "Corporate website example 2",
-    },
-    {
-      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/taxi-1024x1024.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3RheGktMTAyNHgxMDI0LmpwZyIsImlhdCI6MTc2OTYyNzM2NiwiZXhwIjoxODAxMTYzMzY2fQ.aP-Zb0ppaEBudPVwGjAqyq2oFp7rs1sREoWQU-roTSQ",
-      altTh: "ตัวอย่างเว็บไซต์องค์กร 3",
-      altEn: "Corporate website example 3",
-    },
-  ] as const;
+  const servicesShowcase = {
+    src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/templates-services.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3RlbXBsYXRlcy1zZXJ2aWNlcy5wbmciLCJpYXQiOjE3NzA3NDY4MTcsImV4cCI6MTgwMjI4MjgxN30.7Z2AeIBnYGjZCeZZvCGkxWjsqU379MIqvRRUpU040xg",
+    altTh: "ภาพตัวอย่างบริการและเทมเพลตเว็บไซต์",
+    altEn: "Services and website templates showcase",
+  } as const;
   const eyebrowClass =
     lang === "th"
       ? "text-xs font-semibold text-blue-600"
@@ -479,39 +467,22 @@ export default function HomePage() {
                 <div className={illustration ? "space-y-6" : undefined}>
                   {sectionIndex === 1 ? (
                     <div className="mb-10 md:mb-12">
-                      <div
-                        className="flex flex-col gap-4 sm:flex-row sm:items-stretch"
-                        style={{ perspective: "1200px" }}
-                      >
-                        {websiteShowcase.map((item, index) => {
-                          const tilt =
-                            index === 0 ? "-rotate-2 sm:-rotate-3" : index === 2 ? "rotate-2 sm:rotate-3" : "";
-                          const lift =
-                            index === 1 ? "sm:-translate-y-2" : "sm:translate-y-2";
-                          const scale = index === 1 ? "sm:scale-[1.02]" : "";
-                          const z = index === 1 ? "sm:z-10" : "sm:z-0";
-
-                          return (
-                            <div
-                              key={item.src}
-                              className={`group relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_60px_-40px_rgba(15,23,42,0.55)] transition will-change-transform sm:flex-1 ${tilt} ${lift} ${scale} ${z}`}
-                            >
-                              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-white opacity-70" />
-                              <div className="relative m-4 rounded-2xl bg-slate-900/95 p-2 shadow-[0_18px_45px_-35px_rgba(2,6,23,0.9)] ring-1 ring-black/20 sm:h-44">
-                                <div className="flex h-48 items-center justify-center overflow-hidden rounded-xl bg-white sm:h-full">
-                                  <img
-                                    src={item.src}
-                                    alt={lang === "th" ? item.altTh : item.altEn}
-                                    className="h-full w-full object-contain"
-                                    loading="lazy"
-                                    decoding="async"
-                                    fetchPriority="low"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                      <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-gradient-to-br from-white via-blue-50 to-cyan-50 p-4 shadow-[0_30px_80px_-50px_rgba(15,23,42,0.65)] sm:p-5">
+                        <div className="pointer-events-none absolute -top-20 -right-10 h-44 w-44 rounded-full bg-blue-200/35 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-cyan-200/35 blur-3xl" />
+                        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_55px_-40px_rgba(2,6,23,0.75)]">
+                          <div className="absolute left-4 top-4 z-10 rounded-full border border-blue-100 bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700 backdrop-blur">
+                            SST Showcase
+                          </div>
+                          <Image
+                            src={servicesShowcase.src}
+                            alt={lang === "th" ? servicesShowcase.altTh : servicesShowcase.altEn}
+                            width={1400}
+                            height={560}
+                            className="h-auto w-full object-cover"
+                            priority
+                          />
+                        </div>
                       </div>
                     </div>
                   ) : null}
