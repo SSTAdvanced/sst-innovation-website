@@ -14,6 +14,12 @@ export type LeadNotificationPayload = {
   source: string;
   requestId: string;
   createdAt?: string;
+  service?: string | null;
+  quoteRef?: string | null;
+  quoteSubtotal?: number | null;
+  quoteLines?: Array<{ label: string; amount: number }>;
+  priceMin?: number | null;
+  priceMax?: number | null;
 };
 
 function readEnv(name: string): string | null {
@@ -29,15 +35,47 @@ function readEnv(name: string): string | null {
   return unquoted || null;
 }
 
+function formatMoney(amount: number, locale: string): string {
+  return new Intl.NumberFormat(locale === "th" ? "th-TH" : "en-US", {
+    style: "currency",
+    currency: "THB",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
 function formatText(payload: LeadNotificationPayload, leadRef: string | null) {
+  const isEstimate = payload.source.startsWith("estimate");
+  const hasQuoteValues =
+    typeof payload.quoteSubtotal === "number" &&
+    typeof payload.priceMin === "number" &&
+    typeof payload.priceMax === "number";
+  const quoteLines =
+    isEstimate && payload.quoteLines?.length
+      ? payload.quoteLines
+          .filter((line) => line.label && Number.isFinite(Number(line.amount)))
+          .slice(0, 12)
+      : [];
+
   const lines = [
-    "NEW LEAD | SST INNOVATION",
+    isEstimate ? "NEW QUOTE REQUEST | SST INNOVATION" : "NEW LEAD | SST INNOVATION",
     "--------------------",
     leadRef ? `Ref: ${leadRef}` : null,
     `Name: ${payload.name}`,
     `Phone: ${payload.phone || "-"}`,
     `Email: ${payload.email || "-"}`,
     `Source: ${payload.source}`,
+    isEstimate ? `Service: ${payload.service || "-"}` : null,
+    isEstimate ? `Quote Ref: ${payload.quoteRef || "-"}` : null,
+    hasQuoteValues ? `Subtotal: ${formatMoney(payload.quoteSubtotal!, payload.locale)}` : null,
+    hasQuoteValues
+      ? `Range: ${formatMoney(payload.priceMin!, payload.locale)} - ${formatMoney(payload.priceMax!, payload.locale)}`
+      : null,
+    quoteLines.length ? "" : null,
+    quoteLines.length ? "Items:" : null,
+    ...quoteLines.map(
+      (line) =>
+        `- ${line.label}: ${formatMoney(Number(line.amount || 0), payload.locale)}`
+    ),
     "",
     "Message",
     payload.message,

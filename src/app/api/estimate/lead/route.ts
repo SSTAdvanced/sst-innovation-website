@@ -207,6 +207,12 @@ export async function POST(req: Request) {
         message: messageWithEstimate,
         locale,
         source: `estimate:${service ?? "unknown"}`,
+        service,
+        quoteRef,
+        quoteSubtotal,
+        quoteLines,
+        priceMin,
+        priceMax,
       }),
       lead?.id
         ? notifyLineViaCloudflare({
@@ -218,6 +224,12 @@ export async function POST(req: Request) {
             locale,
             source: `estimate:${service ?? "unknown"}`,
             requestId,
+            service,
+            quoteRef,
+            quoteSubtotal,
+            quoteLines,
+            priceMin,
+            priceMax,
           })
         : Promise.resolve("skipped" as const),
     ]);

@@ -750,12 +750,21 @@ export default function EstimateClient({
                   setLeadStartedAt(Date.now());
                   setLeadFormOpen(true);
                 }}
-                className="inline-flex w-full flex-1 items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-xs font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex w-full flex-1 items-center justify-center rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-3 text-xs font-semibold text-blue-900 shadow-sm transition hover:from-blue-100 hover:to-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {locale === "th" ? "ตกลง" : "OK"}
+                {locale === "th"
+                  ? "กรอกข้อมูลรับใบเสนอราคา"
+                  : "Fill details for quotation"}
               </button>
             ) : null}
           </div>
+          {estimateResult ? (
+            <p className="text-xs text-slate-500">
+              {locale === "th"
+                ? "เมื่อกรอกข้อมูลและส่งแล้ว ระบบจะส่งคำขอใบเสนอราคาไปยังทีมงานผ่านอีเมลและ LINE OA อัตโนมัติ"
+                : "After submitting your details, your quote request will be sent to our team via email and LINE OA."}
+            </p>
+          ) : null}
           {estimateError ? <p className="text-sm text-rose-600">{estimateError}</p> : null}
         </form>
       </div>
@@ -929,6 +938,14 @@ export default function EstimateClient({
                   </div>
                   <div className="mt-2 text-sm font-semibold text-slate-900">
                     {formatCurrency(estimateResult.priceMin)} - {formatCurrency(estimateResult.priceMax)}
+                  </div>
+                  <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-semibold">
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700">
+                      {locale === "th" ? "อีเมล" : "Email"}
+                    </span>
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-slate-700">
+                      LINE OA
+                    </span>
                   </div>
                 </div>
               </div>
