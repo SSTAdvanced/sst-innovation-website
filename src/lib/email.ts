@@ -38,8 +38,11 @@ const readEnv = (name: string): string | null => {
 const getMailConfig = (): MailConfig | null => {
   const host = readEnv("SMTP_HOST");
   const portRaw = readEnv("SMTP_PORT") ?? "587";
+  if (!/^\d+$/.test(portRaw)) {
+    return null;
+  }
   const port = Number.parseInt(portRaw, 10);
-  if (!Number.isFinite(port)) {
+  if (!Number.isFinite(port) || port <= 0 || port > 65535) {
     return null;
   }
   const user = readEnv("SMTP_USER");

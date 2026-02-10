@@ -2,13 +2,9 @@
 import {
   ArrowRight,
   Award,
-  Briefcase,
   Layers,
-  Globe2,
   ShieldCheck,
   Sparkles,
-  MessageSquare,
-  Star,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,7 +13,6 @@ import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
 
 const featureIcons = [ShieldCheck, Sparkles, Award, Layers];
-const serviceIcons = [Briefcase, Globe2, Star, MessageSquare];
 
 export default function HomePage() {
   const { lang } = useLang();

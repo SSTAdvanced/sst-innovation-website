@@ -60,6 +60,7 @@ export default function EstimateClient({
   type ReportingKey = keyof typeof estimatorConfig.analytics.reportingFrequency;
   type DashboardKey = keyof typeof estimatorConfig.analytics.dashboards;
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const websiteFeatureLabelsTh: Record<WebsiteFeatureKey, string> = {
     seo: "ตั้งค่า SEO + แนะนำคอนเทนต์",
     ecommerce: "ระบบร้านค้าออนไลน์ (แคตตาล็อก + ชำระเงิน)",
@@ -68,6 +69,7 @@ export default function EstimateClient({
     crm: "เชื่อมต่อ CRM/เก็บลีด",
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const dormitoryModuleLabelsTh: Record<DormitoryModuleKey, string> = {
     billing: "วางบิลอัตโนมัติ + ใบแจ้งหนี้",
     payments: "เชื่อมต่อรับชำระเงินออนไลน์",
@@ -76,18 +78,21 @@ export default function EstimateClient({
     reporting: "รายงานผู้บริหาร",
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const companyAddonLabelsTh: Record<CompanyAddonKey, string> = {
     vat: "จด VAT + จัดเตรียมระบบภาษี",
     accounting: "เตรียมระบบบัญชี + แนะแนวการบันทึกบัญชี",
     contracts: "ชุดเทมเพลตสัญญาเริ่มต้น",
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const reportingLabelsTh: Record<ReportingKey, string> = {
     monthly: "รายงานรายเดือน",
     biweekly: "รายงานทุก 2 สัปดาห์",
     weekly: "รายงานรายสัปดาห์",
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const dashboardLabelsTh: Record<DashboardKey, string> = {
     none: "ไม่ต้องการแดชบอร์ด",
     basic: "แดชบอร์ดผู้บริหาร (พื้นฐาน)",
@@ -338,7 +343,10 @@ export default function EstimateClient({
           return;
         }
         lines.push({
-          label: getWebsiteFeatureLabel(key, feature.label),
+          label:
+            locale === "th"
+              ? websiteFeatureLabelsTh[key as WebsiteFeatureKey] ?? feature.label
+              : feature.label,
           amount: feature.price,
         });
       });
@@ -373,7 +381,10 @@ export default function EstimateClient({
           return;
         }
         lines.push({
-          label: getDormitoryModuleLabel(key, moduleConfig.label),
+          label:
+            locale === "th"
+              ? dormitoryModuleLabelsTh[key as DormitoryModuleKey] ?? moduleConfig.label
+              : moduleConfig.label,
           amount: moduleConfig.price,
         });
       });
@@ -396,7 +407,10 @@ export default function EstimateClient({
           return;
         }
         lines.push({
-          label: getCompanyAddonLabel(key, addOn.label),
+          label:
+            locale === "th"
+              ? companyAddonLabelsTh[key as CompanyAddonKey] ?? addOn.label
+              : addOn.label,
           amount: addOn.price,
         });
       });
@@ -419,11 +433,18 @@ export default function EstimateClient({
         amount: channels * config.perChannel,
       },
       {
-        label: getReportingLabel(reporting, config.reportingFrequency[reporting].label),
+        label:
+          locale === "th"
+            ? reportingLabelsTh[reporting as ReportingKey] ??
+              config.reportingFrequency[reporting].label
+            : config.reportingFrequency[reporting].label,
         amount: config.reportingFrequency[reporting].price,
       },
       {
-        label: getDashboardLabel(dashboard, config.dashboards[dashboard].label),
+        label:
+          locale === "th"
+            ? dashboardLabelsTh[dashboard as DashboardKey] ?? config.dashboards[dashboard].label
+            : config.dashboards[dashboard].label,
         amount: config.dashboards[dashboard].price,
       },
     ];
@@ -434,14 +455,14 @@ export default function EstimateClient({
     dormitoryInputs.modules,
     dormitoryInputs.rooms,
     companyInputs.addons,
+    companyAddonLabelsTh,
+    dashboardLabelsTh,
+    dormitoryModuleLabelsTh,
     estimateResult,
-    getDashboardLabel,
-    getCompanyAddonLabel,
-    getDormitoryModuleLabel,
-    getReportingLabel,
-    getWebsiteFeatureLabel,
     locale,
+    reportingLabelsTh,
     service,
+    websiteFeatureLabelsTh,
     websiteInputs.features,
     websiteInputs.pages,
   ]);

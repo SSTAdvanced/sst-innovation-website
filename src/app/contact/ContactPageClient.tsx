@@ -47,6 +47,7 @@ export default function ContactPageClient() {
     lang === "th"
       ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
       : "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
+  const submitModalVariant = submitModal.open ? submitModal.variant : null;
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -116,7 +117,7 @@ export default function ContactPageClient() {
       return;
     }
 
-    if (submitModal.variant === "success") {
+    if (submitModalVariant === "success") {
       submitModalTimerRef.current = window.setTimeout(() => {
         setSubmitModal({ open: false });
         setStatus("idle");
@@ -128,13 +129,13 @@ export default function ContactPageClient() {
       return;
     }
 
-    if (submitModal.variant === "error") {
+    if (submitModalVariant === "error") {
       submitModalTimerRef.current = window.setTimeout(() => {
         setSubmitModal({ open: false });
         submitModalTimerRef.current = null;
       }, 6000);
     }
-  }, [submitModal.open, submitModal.open ? submitModal.variant : null]);
+  }, [submitModal.open, submitModalVariant]);
 
   useEffect(() => {
     return () => {

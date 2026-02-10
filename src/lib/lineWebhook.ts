@@ -46,15 +46,26 @@ function formatText(payload: LeadNotificationPayload, leadRef: string | null) {
 }
 
 function buildWebhookCandidates(rawUrl: string): string[] {
-  const trimmed = rawUrl.trim().replace(/\/+$/, "");
-  const candidates = new Set<string>([trimmed]);
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl.trim());
+  } catch {
+    return [];
+  }
+
+  if (!/^https?:$/.test(parsed.protocol) || !parsed.host) {
+    return [];
+  }
+
+  const base = parsed.toString().replace(/\/+$/, "");
+  const candidates = new Set<string>([base]);
 
   // Some setups use a single Worker for both LINE platform webhooks and server-to-worker notifications.
   // Prefer /webhook when we can infer it, but keep compatibility with /line-callback.
-  if (trimmed.endsWith("/line-callback")) {
-    candidates.add(trimmed.replace(/\/line-callback$/, "/webhook"));
-  } else if (trimmed.endsWith("/webhook")) {
-    candidates.add(trimmed.replace(/\/webhook$/, "/line-callback"));
+  if (base.endsWith("/line-callback")) {
+    candidates.add(base.replace(/\/line-callback$/, "/webhook"));
+  } else if (base.endsWith("/webhook")) {
+    candidates.add(base.replace(/\/webhook$/, "/line-callback"));
   }
 
   return Array.from(candidates);
@@ -65,13 +76,6 @@ export async function notifyLineViaCloudflare(
 ): Promise<LeadNotifyStatus> {
   const webhookUrl = readEnv("CLOUDFLARE_LINE_WEBHOOK_URL");
   if (!webhookUrl) return "skipped";
-
-  try {
-    // eslint-disable-next-line no-new
-    new URL(webhookUrl);
-  } catch {
-    return "failed";
-  }
 
   const secret = readEnv("CLOUDFLARE_LINE_WEBHOOK_SECRET");
   const leadRef = formatLeadRef(payload.leadId);
@@ -107,6 +111,9 @@ export async function notifyLineViaCloudflare(
   };
 
   const targets = buildWebhookCandidates(webhookUrl);
+  if (!targets.length) {
+    return "failed";
+  }
   const errors: unknown[] = [];
 
   for (const target of targets) {
