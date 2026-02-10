@@ -31,16 +31,15 @@ function readEnv(name: string): string | null {
 
 function formatText(payload: LeadNotificationPayload, leadRef: string | null) {
   const lines = [
-    "New lead — SST INNOVATION",
+    "NEW LEAD | SST INNOVATION",
+    "--------------------",
     leadRef ? `Ref: ${leadRef}` : null,
     `Name: ${payload.name}`,
     `Phone: ${payload.phone || "-"}`,
     `Email: ${payload.email || "-"}`,
     `Source: ${payload.source}`,
-    `Locale: ${payload.locale}`,
-    `Request ID: ${payload.requestId}`,
     "",
-    "Message:",
+    "Message",
     payload.message,
   ];
   return lines.filter(Boolean).join("\n");
@@ -85,18 +84,6 @@ export async function notifyLineViaCloudflare(
   const body = JSON.stringify({
     type: "lead",
     text: formatText(payload, leadRef),
-    // Keep this minimal (avoid raw UUID) to reduce noise if Worker logs/echoes payload.
-    payload: {
-      ref: leadRef,
-      name: payload.name,
-      phone: payload.phone ?? null,
-      email: payload.email ?? null,
-      message: payload.message,
-      locale: payload.locale,
-      source: payload.source,
-      requestId: payload.requestId,
-      createdAt: payload.createdAt ?? null,
-    },
   });
 
   const attempt = async (targetUrl: string, timeoutMs: number) => {
@@ -146,4 +133,3 @@ export async function notifyLineViaCloudflare(
 
   return "failed";
 }
-
