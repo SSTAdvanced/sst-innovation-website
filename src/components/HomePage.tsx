@@ -467,13 +467,10 @@ export default function HomePage() {
                 <div className={illustration ? "space-y-6" : undefined}>
                   {sectionIndex === 1 ? (
                     <div className="mb-10 md:mb-12">
-                      <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 bg-gradient-to-br from-white via-blue-50 to-cyan-50 p-4 shadow-[0_30px_80px_-50px_rgba(15,23,42,0.65)] sm:p-5">
-                        <div className="pointer-events-none absolute -top-20 -right-10 h-44 w-44 rounded-full bg-blue-200/35 blur-3xl" />
-                        <div className="pointer-events-none absolute -bottom-20 -left-10 h-44 w-44 rounded-full bg-cyan-200/35 blur-3xl" />
-                        <div className="relative overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_20px_55px_-40px_rgba(2,6,23,0.75)]">
-                          <div className="absolute left-4 top-4 z-10 rounded-full border border-blue-100 bg-white/95 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-blue-700 backdrop-blur">
-                            SST Showcase
-                          </div>
+                      <div className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-slate-50 via-blue-50/70 to-cyan-50/70 p-3 shadow-[0_28px_70px_-46px_rgba(15,23,42,0.58)] sm:p-4">
+                        <div className="pointer-events-none absolute -top-16 -right-8 h-36 w-36 rounded-full bg-blue-200/30 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-16 -left-8 h-36 w-36 rounded-full bg-cyan-200/30 blur-3xl" />
+                        <div className="relative overflow-hidden rounded-[1.5rem] bg-white/95 shadow-[0_18px_44px_-34px_rgba(2,6,23,0.7)] ring-1 ring-white/70">
                           <Image
                             src={servicesShowcase.src}
                             alt={lang === "th" ? servicesShowcase.altTh : servicesShowcase.altEn}
