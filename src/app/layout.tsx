@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
 import Analytics from "@/components/Analytics";
+import ImageProtection from "@/components/ImageProtection";
 import SiteShell from "@/components/SiteShell";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale, type Locale } from "@/lib/locale";
@@ -91,6 +92,7 @@ export default async function RootLayout({
       <body className={`${notoSansThai.variable} ${notoSerifThai.variable} antialiased`}>
         <StructuredData locale={locale} includeGlobal />
         <Analytics />
+        <ImageProtection />
         <SiteShell initialLang={locale}>{children}</SiteShell>
       </body>
     </html>

@@ -32,3 +32,11 @@ body {
 section {
   scroll-margin-top: 96px;
 }
+
+img,
+picture {
+  -webkit-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}

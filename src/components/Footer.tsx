@@ -46,6 +46,8 @@ export default function Footer({
   const lineId = /@[\w.-]+/.exec(line)?.[0] ?? null;
   const lineHref = lineId ? `https://line.me/R/ti/p/${lineId}` : null;
   const facebookHref = process.env.NEXT_PUBLIC_FACEBOOK_URL || undefined;
+  const iconTileBaseClass =
+    "inline-flex h-11 w-11 items-center justify-center rounded-[6px] text-white transition-transform hover:scale-105";
 
   return (
     <footer className="bg-slate-950 text-slate-200">
@@ -60,14 +62,14 @@ export default function Footer({
               <a
                 href={facebookHref}
                 aria-label="Facebook"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:bg-white/10"
+                className={`${iconTileBaseClass} bg-[#5a73b9]`}
               >
                 <FacebookIcon className="h-5 w-5" />
               </a>
             ) : (
               <div
                 aria-label="Facebook"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 opacity-60"
+                className={`${iconTileBaseClass} bg-[#5a73b9] opacity-60`}
                 title="Set NEXT_PUBLIC_FACEBOOK_URL to enable"
               >
                 <FacebookIcon className="h-5 w-5" />
@@ -76,14 +78,14 @@ export default function Footer({
             <a
               href={`tel:${phone.replace(/\\s+/g, "")}`}
               aria-label="Call"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:bg-white/10"
+              className={`${iconTileBaseClass} bg-[#43aed5]`}
             >
               <Phone className="h-5 w-5" />
             </a>
             <a
               href={`mailto:${email}`}
               aria-label="Email"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:bg-white/10"
+              className={`${iconTileBaseClass} bg-[#ef3f3c]`}
             >
               <Mail className="h-5 w-5" />
             </a>
@@ -91,14 +93,14 @@ export default function Footer({
               <a
                 href={lineHref}
                 aria-label="LINE"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 transition hover:bg-white/10"
+                className={`${iconTileBaseClass} bg-[#36d80f]`}
               >
                 <LineIcon className="h-5 w-5" />
               </a>
             ) : (
               <div
                 aria-label="LINE"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-100 opacity-60"
+                className={`${iconTileBaseClass} bg-[#36d80f] opacity-60`}
                 title="LINE ID not found"
               >
                 <LineIcon className="h-5 w-5" />

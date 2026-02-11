@@ -4,6 +4,7 @@ import type { FormEvent } from "react";
 import { useEffect, useRef, useState } from "react";
 import SubmitStatusModal from "@/components/SubmitStatusModal";
 import { useLang } from "@/components/LangContext";
+import { trackGaEvent } from "@/lib/ga";
 import { getCopy } from "@/lib/i18n";
 import { formatLeadRef } from "@/lib/leadRef";
 
@@ -51,6 +52,7 @@ export default function ContactPageClient() {
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    trackGaEvent("contact_submit_attempt", { locale: lang });
     setStatus("loading");
     setErrorMessage(null);
     setDebugRequestId(null);
@@ -78,6 +80,7 @@ export default function ContactPageClient() {
 
       setStatus("success");
       setLeadRef(formatLeadRef(data?.leadId ?? null));
+      trackGaEvent("contact_submit_success", { locale: lang });
       setSubmitModal({
         open: true,
         variant: "success",
@@ -96,6 +99,7 @@ export default function ContactPageClient() {
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Submission failed. Please try again.";
+      trackGaEvent("contact_submit_error", { locale: lang });
       setErrorMessage(message);
       setStatus("error");
       setSubmitModal({
