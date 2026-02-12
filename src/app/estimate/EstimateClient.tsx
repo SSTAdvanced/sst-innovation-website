@@ -22,7 +22,7 @@ type QuoteLine = {
 const QUOTE_LOGO_SRC =
   "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/photo_2024-09-07_00-31-28.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3Bob3RvXzIwMjQtMDktMDdfMDAtMzEtMjguanBnIiwiaWF0IjoxNzY5OTY5ODY4LCJleHAiOjE4MDE1MDU4Njh9.95nIZMOYTC3RjJPesKQXcHcyjuQR1cpjHvKjXLryXaA";
 
-const serviceLabelsByLocale: Record<"th" | "en", Record<EstimatorService, string>> = {
+const serviceLabelsByLocale: Record<"th" | "en" | "lo", Record<EstimatorService, string>> = {
   th: {
     website: "พัฒนาเว็บไซต์",
     dormitory: "ระบบหอพัก/รีสอร์ท",
@@ -34,6 +34,12 @@ const serviceLabelsByLocale: Record<"th" | "en", Record<EstimatorService, string
     dormitory: "Dormitory system",
     company: "Company registration",
     analytics: "Business analytics",
+  },
+  lo: {
+    website: "ພັດທະນາເວັບໄຊ",
+    dormitory: "ລະບົບຫໍພັກ/ຣີສອດ",
+    company: "ຈົດທະບຽນບໍລິສັດ",
+    analytics: "ວິເຄາະຂໍ້ມູນທຸລະກິດ",
   },
 };
 
@@ -49,7 +55,7 @@ export default function EstimateClient({
   locale,
 }: {
   initialService: EstimatorService;
-  locale: "th" | "en";
+  locale: "th" | "en" | "lo";
 }) {
   const router = useRouter();
   const serviceLabels = serviceLabelsByLocale[locale];

@@ -234,7 +234,8 @@ const content = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
-  const data = content[locale].meta;
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey].meta;
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/services/dormitory-system`;
 
@@ -259,7 +260,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function DormitorySystemPage() {
   const locale = await getRequestedLocale();
-  const data = content[locale];
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey];
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/services/dormitory-system`;
 
@@ -271,7 +273,7 @@ export default async function DormitorySystemPage() {
           name: data.meta.title,
           description: data.meta.description,
           serviceType:
-            locale === "th"
+            localeKey === "th"
               ? "โปรแกรมบริหารหอพักและรีสอร์ท"
               : "Dormitory & Resort Management System",
           url,
@@ -310,7 +312,7 @@ export default async function DormitorySystemPage() {
                 href="/estimate?service=dormitory"
                 className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
               >
-                {locale === "th" ? "ประเมินราคา" : "Estimate price"}
+                {localeKey === "th" ? "ประเมินราคา" : "Estimate price"}
               </Link>
               <Link
                 href="/contact"
@@ -374,10 +376,10 @@ export default async function DormitorySystemPage() {
       <section className="bg-white py-16">
         <div className="mx-auto w-full max-w-5xl space-y-6 px-6">
           <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-slate-900">
-            {locale === "th" ? "คำถามที่พบบ่อย" : "Frequently asked questions"}
+            {localeKey === "th" ? "คำถามที่พบบ่อย" : "Frequently asked questions"}
           </h2>
           <p className="text-base text-slate-600">
-            {locale === "th"
+            {localeKey === "th"
               ? "คำถามที่ลูกค้าสอบถามบ่อยเกี่ยวกับระบบบริหารหอพักและรีสอร์ท"
               : "Common questions about dormitory and resort management systems."}
           </p>
@@ -397,16 +399,16 @@ export default async function DormitorySystemPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-slate-900">
-                {locale === "th" ? "บริการที่เกี่ยวข้อง" : "Related services"}
+                {localeKey === "th" ? "บริการที่เกี่ยวข้อง" : "Related services"}
               </h2>
               <p className="mt-2 text-sm text-slate-600">
-                {locale === "th"
+                {localeKey === "th"
                   ? "บริการอื่นที่ช่วยเสริมการเติบโตของธุรกิจคุณ"
                   : "Other services that complement your growth."}
               </p>
             </div>
             <Link href="/" className="text-sm font-semibold text-blue-700">
-              {locale === "th" ? "กลับหน้าแรก" : "Back to home"}
+              {localeKey === "th" ? "กลับหน้าแรก" : "Back to home"}
             </Link>
           </div>
           <div className="mt-8">
@@ -431,3 +433,5 @@ export default async function DormitorySystemPage() {
     </main>
   );
 }
+
+

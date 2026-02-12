@@ -136,7 +136,42 @@ export default function HomePage() {
             },
           ],
         }
-      : {
+      : lang === "lo"
+        ? {
+            h1: "ຍົກລະດັບທຸລະກິດຂອງທ່ານ ດ້ວຍເວັບໄຊແລະລະບົບທຸລະກິດແບບຄົບວົງຈອນ",
+            sections: [
+              {
+                h2: "SST INNOVATION CO., LTD.",
+                intro: [
+                  "SST INNOVATION ແມ່ນທີມງານຜູ້ຊ່ຽວຊານແບບຄົບວົງຈອນ: ວາງກົນລະຍຸດດິຈິຕອນ, ອອກແບບ, ພັດທະນາ ແລະ ດູແລຫຼັງສົ່ງມອບ. ພວກເຮົາເນັ້ນຄວາມໂປ່ງໃສ, ຄຸນນະພາບ ແລະ ຜົນລັບທາງທຸລະກິດທີ່ວັດໄດ້.",
+                ],
+                h3: [],
+              },
+              {
+                h2: "ບໍລິການພັດທະນາເວັບໄຊຢ່າງມືອາຊີບ",
+                intro: [
+                  "ເຮົາພັດທະນາເວັບໄຊທີ່ສື່ສານແບຣນດ໌ຊັດ, ສ້າງຄວາມນ່າເຊື່ອຖື, ແລະ ພ້ອມສຳລັບ SEO ເພື່ອໃຫ້ເກີດຜົນລັບທາງທຸລະກິດຈິງ.",
+                  "ໂຄງສ້າງເວັບໄຊຖືກອອກແບບໃຫ້ຂະຫຍາຍຕໍ່ໄດ້: ເພີ່ມໜ້າ, ເພີ່ມພາສາ, ຫຼື ເຊື່ອມຕໍ່ລະບົບອື່ນໆໃນອະນາຄົດ.",
+                ],
+                h3: [],
+              },
+              {
+                h2: "ລະບົບຫໍພັກ/ຣີສອດ ແລະ ລະບົບບໍລິຫານ",
+                intro: [
+                  "ລະບົບບໍລິຫານຫ້ອງພັກ, ສັນຍາ, ການຊຳລະເງິນ ແລະ ລາຍງານ ເພື່ອຫຼຸດງານຊ້ຳຊ້ອນ ແລະ ເພີ່ມຄວາມແມ່ນຍຳໃນການຈັດການ.",
+                ],
+                h3: [],
+              },
+              {
+                h2: "ບໍລິການຈົດທະບຽນບໍລິສັດແບບຄົບວົງຈອນ",
+                intro: [
+                  "ດູແລຂັ້ນຕອນເອກະສານ ແລະ ການຈົດທະບຽນຢ່າງຖືກຕ້ອງ ພ້ອມຄຳແນະນຳເຊິງທຸລະກິດ ເພື່ອໃຫ້ເລີ່ມຕົ້ນໄດ້ຢ່າງມືອາຊີບ.",
+                ],
+                h3: [],
+              },
+            ],
+          }
+        : {
           h1: "Elevate your business with full-service websites and business systems",
           sections: [
             {
@@ -374,43 +409,51 @@ export default function HomePage() {
               <div className="space-y-6">
                 <div>
                   <p className="text-xs uppercase tracking-[0.2em] text-blue-200">
-                    {lang === "th" ? "เทคโนโลยีระดับพรีเมียม" : "Premium Stack"}
-                  </p>
-                  <p className="mt-2 text-2xl font-semibold">
-                    {lang === "th"
-                      ? "มาตรฐานสากลระดับโลก"
-                      : "Global-standard platform"}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 gap-4 text-sm text-blue-100">
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-2xl font-semibold text-white">98%</p>
-                    <p>{lang === "th" ? "คะแนนประสิทธิภาพ" : "Performance score"}</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-2xl font-semibold text-white">24/7</p>
-                    <p>{lang === "th" ? "มอนิเตอร์ 24/7" : "Monitoring"}</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-2xl font-semibold text-white">
-                      {lang === "th" ? "14 วัน" : "14d"}
-                    </p>
-                    <p>{lang === "th" ? "ส่งมอบเฉลี่ย" : "Fast delivery"}</p>
-                  </div>
-                  <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                    <p className="text-2xl font-semibold text-white">100+</p>
-                    <p>{lang === "th" ? "มาตรฐาน" : "Standards"}</p>
-                  </div>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-blue-100">
-                  {lang === "th"
-                    ? "ระบบครบวงจรและระดับ Supabase Deploy บน Vercel ได้ทันที"
-                    : "End-to-end Supabase system, deployable on Vercel instantly"}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+                     {lang === "th"
+                       ? "เทคโนโลยีระดับพรีเมียม"
+                       : lang === "lo"
+                         ? "ເຕັກໂນໂລຊີລະດັບພຣີເມຍມ"
+                         : "Premium Stack"}
+                   </p>
+                   <p className="mt-2 text-2xl font-semibold">
+                     {lang === "th"
+                       ? "มาตรฐานสากลระดับโลก"
+                       : lang === "lo"
+                         ? "ມາດຕະຖານສາກົນລະດັບໂລກ"
+                         : "Global-standard platform"}
+                   </p>
+                 </div>
+                 <div className="grid grid-cols-2 gap-4 text-sm text-blue-100">
+                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                     <p className="text-2xl font-semibold text-white">98%</p>
+                     <p>{lang === "th" ? "คะแนนประสิทธิภาพ" : lang === "lo" ? "ຄະແນນປະສິດທິພາບ" : "Performance score"}</p>
+                   </div>
+                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                     <p className="text-2xl font-semibold text-white">24/7</p>
+                     <p>{lang === "th" ? "มอนิเตอร์ 24/7" : lang === "lo" ? "ຕິດຕາມ 24/7" : "Monitoring"}</p>
+                   </div>
+                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                     <p className="text-2xl font-semibold text-white">
+                       {lang === "th" ? "14 วัน" : lang === "lo" ? "14 ມື້" : "14d"}
+                     </p>
+                     <p>{lang === "th" ? "ส่งมอบเฉลี่ย" : lang === "lo" ? "ສົ່ງມອບໂດຍສະເລ່ຍ" : "Fast delivery"}</p>
+                   </div>
+                   <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
+                     <p className="text-2xl font-semibold text-white">100+</p>
+                     <p>{lang === "th" ? "มาตรฐาน" : lang === "lo" ? "ມາດຕະຖານ" : "Standards"}</p>
+                   </div>
+                 </div>
+                 <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-blue-100">
+                   {lang === "th"
+                     ? "ระบบครบวงจรและระดับ Supabase Deploy บน Vercel ได้ทันที"
+                     : lang === "lo"
+                       ? "ລະບົບ Supabase ຄົບວົງຈອນ ສາມາດ deploy ຂຶ້ນ Vercel ໄດ້ທັນທີ"
+                       : "End-to-end Supabase system, deployable on Vercel instantly"}
+                 </div>
+               </div>
+             </div>
+           </div>
+         </section>
 
         <section id="seo" className="bg-white py-20">
           <div className="mx-auto w-full max-w-5xl space-y-12 px-6">
@@ -1011,3 +1054,8 @@ export default function HomePage() {
     </>
   );
 }
+
+
+
+
+

@@ -37,7 +37,7 @@ export function LangProvider({
   );
 
   const toggleLang = useCallback(() => {
-    setLang(lang === "th" ? "en" : "th");
+    setLang(lang === "th" ? "en" : lang === "en" ? "lo" : "th");
   }, [lang, setLang]);
 
   const value = useMemo<LangContextValue>(

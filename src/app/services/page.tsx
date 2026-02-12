@@ -73,7 +73,8 @@ const content = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
-  const data = content[locale].meta;
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey].meta;
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/services`;
 
@@ -98,7 +99,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ServicesIndexPage() {
   const locale = await getRequestedLocale();
-  const data = content[locale];
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey];
   const copy = getCopy(locale as Lang);
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const serviceIcons = [Briefcase, Globe2, Star, MessageSquare];
@@ -112,7 +114,7 @@ export default async function ServicesIndexPage() {
           { name: data.crumbs[1].label, item: `${baseUrl}/services` },
         ]}
         service={{
-          name: locale === "th" ? "บริการของเรา" : "Our Services",
+          name: localeKey === "th" ? "บริการของเรา" : "Our Services",
           description: data.meta.description,
           serviceType: "Digital services",
           url: `${baseUrl}/services`,
@@ -131,13 +133,13 @@ export default async function ServicesIndexPage() {
               href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
-              {locale === "th" ? "ขอใบเสนอราคา" : "Request a quote"}
+              {localeKey === "th" ? "ขอใบเสนอราคา" : "Request a quote"}
             </Link>
             <Link
               href="/contact"
               className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
             >
-              {locale === "th" ? "ปรึกษาฟรี" : "Free consultation"}
+              {localeKey === "th" ? "ปรึกษาฟรี" : "Free consultation"}
             </Link>
           </div>
         </div>
@@ -228,3 +230,5 @@ export default async function ServicesIndexPage() {
     </main>
   );
 }
+
+

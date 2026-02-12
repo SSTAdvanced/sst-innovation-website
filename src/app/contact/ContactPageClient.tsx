@@ -84,7 +84,12 @@ export default function ContactPageClient() {
       setSubmitModal({
         open: true,
         variant: "success",
-        title: lang === "th" ? "ส่งสำเร็จ" : "Sent successfully",
+        title:
+          lang === "th"
+            ? "ส่งสำเร็จ"
+            : lang === "lo"
+              ? "ສົ່ງສຳເລັດ"
+              : "Sent successfully",
         message: copy.contact.success,
       });
 
@@ -105,7 +110,12 @@ export default function ContactPageClient() {
       setSubmitModal({
         open: true,
         variant: "error",
-        title: lang === "th" ? "ส่งไม่สำเร็จ" : "Failed to send",
+        title:
+          lang === "th"
+            ? "ส่งไม่สำเร็จ"
+            : lang === "lo"
+              ? "ສົ່ງບໍ່ສຳເລັດ"
+              : "Failed to send",
         message,
       });
     }
@@ -318,7 +328,7 @@ export default function ContactPageClient() {
         title={submitModal.open ? submitModal.title : ""}
         message={submitModal.open ? submitModal.message : undefined}
         reference={submitModal.open && submitModal.variant === "success" ? leadRef : null}
-        closeLabel={lang === "th" ? "ตกลง" : "OK"}
+        closeLabel={lang === "th" ? "ตกลง" : lang === "lo" ? "ຕົກລົງ" : "OK"}
         onClose={() => setSubmitModal({ open: false })}
       />
     </main>

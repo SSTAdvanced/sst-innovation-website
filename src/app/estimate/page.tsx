@@ -12,11 +12,13 @@ export async function generateMetadata(): Promise<Metadata> {
   const title =
     locale === "th"
       ? "คำนวณช่วงราคาเบื้องต้น | SST INNOVATION"
-      : "Service Estimator | SST INNOVATION";
+      : locale === "lo" ? "ຄຳນວນຊ່ວງລາຄາເບື້ອງຕົ້ນ | SST INNOVATION" : "Service Estimator | SST INNOVATION";
   const description =
     locale === "th"
       ? "คำนวณช่วงราคาเบื้องต้นแบบ rule-based สำหรับเว็บไซต์ ระบบหอพัก/รีสอร์ท และ analytics"
-      : "Rule-based estimator for websites, dormitory systems, and analytics.";
+      : locale === "lo"
+        ? "ຄຳນວນຊ່ວງລາຄາເບື້ອງຕົ້ນແບບ rule-based ສຳລັບເວັບໄຊທ໌, ລະບົບຫໍພັກ/ຣີສອດ ແລະ analytics"
+        : "Rule-based estimator for websites, dormitory systems, and analytics.";
   const baseUrl = SITE_URL.replace(/\/+$/, "");
 
   return {
@@ -53,25 +55,27 @@ export default async function EstimatePage({
             SST INNOVATION
           </p>
           <h1 className="font-[var(--font-heading)] text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-            {locale === "th" ? "คำนวณช่วงราคาเบื้องต้น" : "Service Estimator"}
+            {locale === "th" ? "คำนวณช่วงราคาเบื้องต้น" : locale === "lo" ? "ຄຳນວນຊ່ວງລາຄາເບື້ອງຕົ້ນ" : "Service Estimator"}
           </h1>
           <p className="max-w-2xl text-sm text-slate-600 sm:text-base">
             {locale === "th"
               ? "ประเมินช่วงราคาแบบรวดเร็ว และส่งข้อมูลเพื่อรับใบเสนอราคา"
-              : "Get a quick ballpark range and request a tailored quote."}
+              : locale === "lo"
+                ? "ປະເມີນຊ່ວງລາຄາແບບຮວດໄວ ແລະ ສົ່ງຂໍ້ມູນເພື່ອຮັບໃບສະເໜີລາຄາ"
+                : "Get a quick ballpark range and request a tailored quote."}
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/services"
               className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
             >
-              {locale === "th" ? "ดูบริการทั้งหมด" : "View services"}
+              {locale === "th" ? "ดูบริการทั้งหมด" : locale === "lo" ? "ເບິ່ງບໍລິການທັງໝົດ" : "View services"}
             </Link>
             <Link
               href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
-              {locale === "th" ? "ปรึกษาฟรี" : "Free consultation"}
+              {locale === "th" ? "ปรึกษาฟรี" : locale === "lo" ? "ປຶກສາຟຣີ" : "Free consultation"}
             </Link>
           </div>
         </div>
@@ -85,3 +89,4 @@ export default async function EstimatePage({
     </main>
   );
 }
+

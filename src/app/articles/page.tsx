@@ -73,6 +73,39 @@ const content = {
       },
     ],
   },
+  lo: {
+    meta: {
+      title: "ບົດຄວາມທຸລະກິດ ແລະ ດິຈິຕອນ | SST INNOVATION",
+      description:
+        "ບົດຄວາມແນວກົນລະຍຸດກ່ຽວກັບການພັດທະນາເວັບໄຊ, ລະບົບບໍລິຫານຫໍພັກ/ຣີສອດ, ແລະ ການຈົດທະບຽນບໍລິສັດ ເພື່ອຊ່ວຍໃຫ້ທ່ານຕັດສິນໃຈໄດ້ຢ່າງມັ່ນໃຈ.",
+    },
+    hero: {
+      title: "ບົດຄວາມທຸລະກິດ ແລະ ດິຈິຕອນທີ່ນຳໄປໃຊ້ໄດ້ຈິງ",
+      subtitle:
+        "ຮວບຮວມແນວຄິດແລະແນວທາງ ສຳລັບການວາງແຜນເວັບໄຊ, ລະບົບບໍລິຫານ, ແລະ ການເລີ່ມທຸລະກິດໃຫ້ມີຄວາມພ້ອມ.",
+    },
+    crumbs: [
+      { label: "ໜ້າຫຼັກ", href: "/" },
+      { label: "ບົດຄວາມ" },
+    ],
+    items: [
+      {
+        title: "ເລືອກທີມພັດທະນາເວັບໄຊແນວໃດໃຫ້ໄດ້ຜົນລະຍະຍາວ",
+        excerpt:
+          "ເກນສຳຄັນໃນການເລືອກພາດເນີທີ່ເຂົ້າໃຈທຸລະກິດ: ຕັ້ງແຕ່ກົນລະຍຸດ, UX, ຈົນເຖິງການດູແລຫຼັງສົ່ງມອບ.",
+      },
+      {
+        title: "ລະບົບບໍລິຫານຫໍພັກ/ຣີສອດ ຊ່ວຍຫຼຸດຕົ້ນທຶນ ແລະ ເພີ່ມລາຍຮັບແນວໃດ",
+        excerpt:
+          "ໂຄງສ້າງການດຳເນີນງານທີ່ໂປ່ງໃສ, ຫຼຸດຄວາມຊ້ຳຊ້ອນ, ແລະ ລາຍງານແມ່ນຍຳ.",
+      },
+      {
+        title: "ຈົດທະບຽນບໍລິສັດ 4 ຂັ້ນຕອນແບບມີໂຄງສ້າງ",
+        excerpt:
+          "ແນະນຳເອກະສານ, ໂຄງສ້າງຜູ້ຖືຫຸ້ນ, ແລະ ການກະກຽມຄວາມພ້ອມກ່ອນຍື່ນຈົດທະບຽນ.",
+      },
+    ],
+  },
 } as const;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -118,13 +151,13 @@ export default async function ArticlesPage() {
               href="/contact"
               className="rounded-full bg-slate-900 px-5 py-2 text-xs font-semibold text-white"
             >
-              {locale === "th" ? "ขอใบเสนอราคา" : "Request a quote"}
+              {locale === "th" ? "ขอใบเสนอราคา" : locale === "lo" ? "ຂໍໃບສະເໜີລາຄາ" : "Request a quote"}
             </Link>
             <Link
               href="/contact"
               className="rounded-full border border-slate-300 px-5 py-2 text-xs font-semibold text-slate-700"
             >
-              {locale === "th" ? "ปรึกษาฟรี" : "Free consultation"}
+              {locale === "th" ? "ปรึกษาฟรี" : locale === "lo" ? "ປຶກສາຟຣີ" : "Free consultation"}
             </Link>
           </div>
         </div>
@@ -144,7 +177,7 @@ export default async function ArticlesPage() {
                   href="/contact"
                   className="mt-4 inline-flex text-sm font-semibold text-blue-700"
                 >
-                  {locale === "th" ? "ปรึกษาเพื่อเริ่มต้น" : "Talk to our team"}
+                  {locale === "th" ? "ปรึกษาเพื่อเริ่มต้น" : locale === "lo" ? "ປຶກສາເພື່ອເລີ່ມຕົ້ນ" : "Talk to our team"}
                 </Link>
               </div>
             ))}
@@ -157,16 +190,18 @@ export default async function ArticlesPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-slate-900">
-                {locale === "th" ? "บริการที่เกี่ยวข้อง" : "Related services"}
+                {locale === "th" ? "บริการที่เกี่ยวข้อง" : locale === "lo" ? "ບໍລິການທີ່ກ່ຽວຂ້ອງ" : "Related services"}
               </h2>
               <p className="mt-2 text-sm text-slate-600">
                 {locale === "th"
                   ? "เชื่อมโยงบทความกับบริการที่คุณสนใจ"
-                  : "Connect insights to the services you need."}
+                  : locale === "lo"
+                    ? "ເຊື່ອມໂຍງບົດຄວາມກັບບໍລິການທີ່ທ່ານສົນໃຈ"
+                    : "Connect insights to the services you need."}
               </p>
             </div>
             <Link href="/" className="text-sm font-semibold text-blue-700">
-              {locale === "th" ? "กลับหน้าแรก" : "Back to home"}
+              {locale === "th" ? "กลับหน้าแรก" : locale === "lo" ? "ກັບໜ້າຫຼັກ" : "Back to home"}
             </Link>
           </div>
           <div className="mt-8">
@@ -177,3 +212,4 @@ export default async function ArticlesPage() {
     </main>
   );
 }
+

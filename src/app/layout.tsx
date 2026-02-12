@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai, Noto_Serif_Thai } from "next/font/google";
+import { Noto_Sans_Lao, Noto_Sans_Thai, Noto_Serif_Lao, Noto_Serif_Thai } from "next/font/google";
 import Analytics from "@/components/Analytics";
 import ImageProtection from "@/components/ImageProtection";
 import SiteShell from "@/components/SiteShell";
@@ -17,6 +17,20 @@ const notoSansThai = Noto_Sans_Thai({
 const notoSerifThai = Noto_Serif_Thai({
   subsets: ["latin", "thai"],
   variable: "--font-serif-thai",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const notoSansLao = Noto_Sans_Lao({
+  subsets: ["latin", "lao"],
+  variable: "--font-sans-lao",
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const notoSerifLao = Noto_Serif_Lao({
+  subsets: ["latin", "lao"],
+  variable: "--font-serif-lao",
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -45,6 +59,13 @@ const metadataByLocale: Record<
       "SST INNOVATION provides professional website development, dormitory and resort management systems, and complete company registration services to support your business growth.",
     ogLocale: "en_US",
     alternateLocales: ["th_TH"],
+  },
+  lo: {
+    title: "ບໍລິການພັດທະນາເວັບໄຊ | ລະບົບທຸລະກິດ | SST INNOVATION",
+    description:
+      "SST INNOVATION ໃຫ້ບໍລິການພັດທະນາເວັບໄຊ ແລະ ລະບົບທຸລະກິດຢ່າງມືອາຊີບ ເພື່ອຊ່ວຍໃຫ້ທຸລະກິດເຕີບໂຕ",
+    ogLocale: "lo_LA",
+    alternateLocales: ["th_TH", "en_US"],
   },
 };
 
@@ -89,7 +110,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${notoSansThai.variable} ${notoSerifThai.variable} antialiased`}>
+      <body
+        className={`${notoSansThai.variable} ${notoSerifThai.variable} ${notoSansLao.variable} ${notoSerifLao.variable} antialiased`}
+      >
         <StructuredData locale={locale} includeGlobal />
         <Analytics />
         <ImageProtection />

@@ -412,7 +412,8 @@ function iconForProblem(key: LocaleContent["problems"][number]["icon"]) {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
-  const data = content[locale];
+  const contentLocale = locale === "lo" ? "en" : locale;
+  const data = content[contentLocale];
 
   return {
     title: data.meta.title,
@@ -423,7 +424,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SeoAiPage() {
   const locale = await getRequestedLocale();
-  const data = content[locale];
+  const contentLocale = locale === "lo" ? "en" : locale;
+  const data = content[contentLocale];
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/seo-ai`;
 

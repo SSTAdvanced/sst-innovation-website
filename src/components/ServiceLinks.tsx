@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import type { Locale } from "@/lib/locale";
+import type { Lang } from "@/lib/i18n";
 import { trackGaEvent } from "@/lib/ga";
 import { logEvent } from "@/lib/eventLogger";
 
 type ServiceLinksProps = {
-  locale: Locale;
+  locale: Lang;
   current?: "website" | "dormitory-system" | "company-registration";
 };
 
@@ -66,7 +66,8 @@ const servicesByLocale = {
 } as const;
 
 export default function ServiceLinks({ locale, current }: ServiceLinksProps) {
-  const services = servicesByLocale[locale];
+  const copyLocale = locale === "en" ? "en" : "th";
+  const services = servicesByLocale[copyLocale];
   const onServiceClick = (serviceKey: string) => {
     trackGaEvent("service_click", { service: serviceKey, location: "service_cards" });
     logEvent({
@@ -95,7 +96,7 @@ export default function ServiceLinks({ locale, current }: ServiceLinksProps) {
               <h3 className="text-lg font-semibold text-slate-900">{service.title}</h3>
               <p className="mt-3 text-sm text-slate-600">{service.description}</p>
               <span className="mt-4 inline-flex text-xs font-semibold uppercase tracking-[0.2em] text-blue-600">
-                {locale === "th" ? "ดูรายละเอียด" : "View details"}
+                {copyLocale === "th" ? "ดูรายละเอียด" : "View details"}
               </span>
             </Link>
             {service.estimateHref ? (
@@ -104,7 +105,7 @@ export default function ServiceLinks({ locale, current }: ServiceLinksProps) {
                 onClick={() => onServiceClick(service.key)}
                 className="mt-4 inline-flex rounded-full border border-slate-300 px-4 py-2 text-xs font-semibold text-slate-700"
               >
-                {locale === "th" ? "ประเมินราคา" : "Estimate price"}
+                {copyLocale === "th" ? "ประเมินราคา" : "Estimate price"}
               </Link>
             ) : null}
           </div>
@@ -113,3 +114,4 @@ export default function ServiceLinks({ locale, current }: ServiceLinksProps) {
     </div>
   );
 }
+

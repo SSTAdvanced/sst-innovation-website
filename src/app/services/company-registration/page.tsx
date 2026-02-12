@@ -222,7 +222,8 @@ const content = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();
-  const data = content[locale].meta;
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey].meta;
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/services/company-registration`;
 
@@ -247,7 +248,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function CompanyRegistrationPage() {
   const locale = await getRequestedLocale();
-  const data = content[locale];
+  const localeKey = locale === "lo" ? "en" : locale;
+  const data = content[localeKey];
   const baseUrl = SITE_URL.replace(/\/+$/, "");
   const url = `${baseUrl}/services/company-registration`;
 
@@ -259,7 +261,7 @@ export default async function CompanyRegistrationPage() {
           name: data.meta.title,
           description: data.meta.description,
           serviceType:
-            locale === "th" ? "บริการจดทะเบียนบริษัท" : "Company Registration",
+            localeKey === "th" ? "บริการจดทะเบียนบริษัท" : "Company Registration",
           url,
         }}
         faqs={data.faq.map((item) => ({ question: item.q, answer: item.a }))}
@@ -354,10 +356,10 @@ export default async function CompanyRegistrationPage() {
       <section className="bg-white py-16">
         <div className="mx-auto w-full max-w-5xl space-y-6 px-6">
           <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-slate-900">
-            {locale === "th" ? "คำถามที่พบบ่อย" : "Frequently asked questions"}
+            {localeKey === "th" ? "คำถามที่พบบ่อย" : "Frequently asked questions"}
           </h2>
           <p className="text-base text-slate-600">
-            {locale === "th"
+            {localeKey === "th"
               ? "คำถามที่ลูกค้าสอบถามบ่อยเกี่ยวกับบริการจดทะเบียนบริษัท"
               : "Common questions about company registration."}
           </p>
@@ -377,16 +379,16 @@ export default async function CompanyRegistrationPage() {
           <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
             <div>
               <h2 className="font-[var(--font-heading)] text-2xl font-semibold text-slate-900">
-                {locale === "th" ? "บริการที่เกี่ยวข้อง" : "Related services"}
+                {localeKey === "th" ? "บริการที่เกี่ยวข้อง" : "Related services"}
               </h2>
               <p className="mt-2 text-sm text-slate-600">
-                {locale === "th"
+                {localeKey === "th"
                   ? "ลิงก์ไปยังบริการอื่นเพื่อการตัดสินใจที่ครบถ้วน"
                   : "Explore other services to complete your decision."}
               </p>
             </div>
             <Link href="/" className="text-sm font-semibold text-blue-700">
-              {locale === "th" ? "กลับหน้าแรก" : "Back to home"}
+              {localeKey === "th" ? "กลับหน้าแรก" : "Back to home"}
             </Link>
           </div>
           <div className="mt-8">
@@ -411,3 +413,5 @@ export default async function CompanyRegistrationPage() {
     </main>
   );
 }
+
+

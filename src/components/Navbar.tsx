@@ -29,13 +29,18 @@ type NavbarProps = {
 };
 
 export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps) {
-  const langCode = lang === "th" ? "TH" : "EN";
+  const langCode = lang === "th" ? "TH" : lang === "en" ? "EN" : "LO";
   const langFlagSrc =
     lang === "th"
       ? "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/pngtree-spherical-thailand-flag-png-image_3510746.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3BuZ3RyZWUtc3BoZXJpY2FsLXRoYWlsYW5kLWZsYWctcG5nLWltYWdlXzM1MTA3NDYuanBnIiwiaWF0IjoxNzcwNzQ2NTA2LCJleHAiOjE4MDIyODI1MDZ9.qt45pLITCBp9F2YaRCrcPF2bKnq6JplnXBuXaJR-nDM"
       : "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/depositphotos_490775414-stock-illustration-britain-british-flag-icon-flat.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL2RlcG9zaXRwaG90b3NfNDkwNzc1NDE0LXN0b2NrLWlsbHVzdHJhdGlvbi1icml0YWluLWJyaXRpc2gtZmxhZy1pY29uLWZsYXQuanBnIiwiaWF0IjoxNzcwNzQ2NDYyLCJleHAiOjE4MDIyODI0NjJ9.qBpNdHVUH7t1X0oGgjGF6ZsSUovgwZPtTVIGIPW_khc";
-  const langFlagAlt = lang === "th" ? "Thailand flag" : "UK flag";
-  const featuresOverviewLabel = lang === "th" ? "จุดเด่นโดยรวม" : "Highlights overview";
+  const langFlagSrcResolved =
+    lang === "lo"
+      ? "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/flag-laos-with-red-blue-stripes-white-circle-vector-icon-design_877269-3713.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL2ZsYWctbGFvcy13aXRoLXJlZC1ibHVlLXN0cmlwZXMtd2hpdGUtY2lyY2xlLXZlY3Rvci1pY29uLWRlc2lnbl84NzcyNjktMzcxMy5qcGciLCJpYXQiOjE3NzA3OTgwOTYsImV4cCI6MTgwMjMzNDA5Nn0.jN6soZsQ12XHB27BFZC1zW5pGyXJlDeo45AF2miok0I"
+      : langFlagSrc;
+  const langFlagAlt = lang === "th" ? "Thailand flag" : lang === "en" ? "UK flag" : "Laos flag";
+  const isEnglishStyle = lang === "en";
+  const featuresOverviewLabel = isEnglishStyle ? "Highlights overview" : labels.features;
   const featuresSeoAiLabel = "SEO AI";
 
   const t =
@@ -55,6 +60,22 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
           close: "ปิด",
           language: "ภาษา",
         }
+      : lang === "lo"
+        ? {
+            servicesOverview: "ພາບລວມບໍລິການ",
+            servicesWebsite: "ພັດທະນາເວັບໄຊ",
+            servicesDorm: "ລະບົບຫໍພັກ/ຣີສອດ",
+            servicesCompany: "ຈົດທະບຽນບໍລິສັດ",
+            packagesPos: "ແພັກເກດ ລະບົບ POS",
+            packagesWebsite: "ແພັກເກດ ເວັບໄຊ",
+            packagesDorm: "ແພັກເກດ ຫໍພັກ",
+            packagesCompany: "ແພັກເກດ ຈົດທະບຽນບໍລິສັດ",
+            templatesCorporate: "ເວັບໄຊອົງກອນ",
+            templatesEcommerce: "ຮ້ານຄ້າອອນລາຍ",
+            menu: "ເມນູ",
+            close: "ປິດ",
+            language: "ພາສາ",
+          }
       : {
           servicesOverview: "Services overview",
           servicesWebsite: "Website Development",
@@ -72,9 +93,9 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
         };
 
   const ctaClass =
-    lang === "th"
-      ? "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-slate-300 md:border-0 md:bg-slate-900 md:px-4 md:py-2 md:text-xs md:font-semibold md:text-white md:shadow-md md:hover:bg-slate-800"
-      : "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-slate-300 md:border-0 md:bg-slate-900 md:px-4 md:py-2 md:text-xs md:font-semibold md:text-white md:shadow-md md:hover:bg-slate-800 md:uppercase md:tracking-[0.18em]";
+    isEnglishStyle
+      ? "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-slate-300 md:border-0 md:bg-slate-900 md:px-4 md:py-2 md:text-xs md:font-semibold md:text-white md:shadow-md md:hover:bg-slate-800 md:uppercase md:tracking-[0.18em]"
+      : "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-slate-300 md:border-0 md:bg-slate-900 md:px-4 md:py-2 md:text-xs md:font-semibold md:text-white md:shadow-md md:hover:bg-slate-800";
 
   const onNavClick = (key: NavKey) => {
     if (key !== "services") {
@@ -734,7 +755,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
                           className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
                         >
                           <Image
-                            src={langFlagSrc}
+                            src={langFlagSrcResolved}
                             alt={langFlagAlt}
                             width={16}
                             height={16}
@@ -772,7 +793,7 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
             className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300"
           >
             <Image
-              src={langFlagSrc}
+              src={langFlagSrcResolved}
               alt={langFlagAlt}
               width={16}
               height={16}
@@ -790,3 +811,4 @@ export default function Navbar({ lang, onToggleLang, labels, cta }: NavbarProps)
     </header>
   );
 }
+

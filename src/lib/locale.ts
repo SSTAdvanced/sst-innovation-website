@@ -1,18 +1,21 @@
 import { cookies, headers } from "next/headers";
 
-export type Locale = "th" | "en";
+export type Locale = "th" | "en" | "lo";
 
 const DEFAULT_LOCALE: Locale = "th";
 
 function getLocaleFromCookie(value?: string): Locale | null {
   if (!value) return null;
   const normalized = value.toLowerCase();
-  return normalized === "th" || normalized === "en" ? normalized : null;
+  return normalized === "th" || normalized === "en" || normalized === "lo" ? normalized : null;
 }
 
 function getLocaleFromHeader(value: string | null): Locale {
   if (!value) return DEFAULT_LOCALE;
-  return value.toLowerCase().startsWith("en") ? "en" : "th";
+  const normalized = value.toLowerCase();
+  if (normalized.startsWith("lo")) return "lo";
+  if (normalized.startsWith("en")) return "en";
+  return "th";
 }
 
 export async function getRequestedLocale(): Promise<Locale> {

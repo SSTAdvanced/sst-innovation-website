@@ -7,9 +7,10 @@
   --primary-dark: #1e3a8a;
   --surface: #ffffff;
   --border: #e2e8f0;
-  --font-body: var(--font-sans-thai), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    "Helvetica Neue", Arial, sans-serif;
-  --font-heading: var(--font-serif-thai), ui-serif, Georgia, "Times New Roman", serif;
+  --font-body: var(--font-sans-lao), var(--font-sans-thai), ui-sans-serif, system-ui,
+    -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-heading: var(--font-serif-lao), var(--font-serif-thai), ui-serif, Georgia,
+    "Times New Roman", serif;
 }
 
 @theme inline {

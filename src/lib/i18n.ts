@@ -1,4 +1,4 @@
-export type Lang = "th" | "en";
+export type Lang = "th" | "en" | "lo";
 
 type Dict = {
   nav: {
@@ -474,6 +474,205 @@ export const dict: Record<Lang, Dict> = {
       email: "sstaminno@gmail.com",
       line: "Line: @974qhtym",
       note: "Enterprise digital solutions across websites, applications, and internal systems.",
+    },
+  },
+  lo: {
+    nav: {
+      home: "ໜ້າຫຼັກ",
+      features: "ຈຸດເດັ່ນ",
+      platforms: "ແພລດຟອມ",
+      services: "ບໍລິການ",
+      packages: "ແພັກເກັດ",
+      portfolio: "ແມ່ແບບ",
+      articles: "ບົດຄວາມ",
+      contact: "ຕິດຕໍ່",
+    },
+    hero: {
+      title: "Pro ຈາກ SST INNOVATION",
+      subtitle:
+        "ໂຊລູຊັນເວັບໄຊອົງກອນລະດັບພຣີເມຍມ ເພື່ອຍົກລະດັບຄວາມນ່າເຊື່ອຖື ແລະ ຮອງຮັບການເຕີບໂຕໃນລະຍະຍາວ",
+      primaryCta: "ຂໍໃບສະເໜີລາຄາ",
+      secondaryCta: "ເບິ່ງແພັກເກັດ",
+      trust: "ໄດ້ຮັບຄວາມໄວ້ວາງໃຈຈາກອົງກອນ ແລະ ລູກຄ້າທົ່ວໄປ",
+    },
+    features: {
+      title: "ເປັນຫຍັງຕ້ອງ SST INNOVATION Pro",
+      subtitle: "ອອກແບບເພື່ອທຸລະກິດທີ່ຕ້ອງການຄວາມແຕກຕ່າງ ແລະ ຄວາມນ່າເຊື່ອຖື",
+      items: [
+        {
+          title: "ດີໄຊນ໌ລະດັບອົງກອນ",
+          description:
+            "ວາງໂຄງສ້າງ UI/UX ຢ່າງເປັນລະບົບ ເພື່ອສື່ສານຄວາມເປັນມືອາຊີບ",
+        },
+        {
+          title: "ປະສິດທິພາບສູງ",
+          description:
+            "ໂຄງສ້າງໂຄດທັນສະໄໝ ໂຫລດໄວ ຮອງຮັບ SEO ແລະ Core Web Vitals",
+        },
+        {
+          title: "ຄວາມປອດໄພ ແລະ ມາດຕະຖານ",
+          description:
+            "ພ້ອມຕໍ່ຍອດກັບລະບົບພາຍໃນ ແລະ ມາດຕະຖານຄວາມປອດໄພ",
+        },
+        {
+          title: "ດູແລຕໍ່ເນື່ອງ",
+          description:
+            "ທີມຜູ້ຊ່ຽວຊານດູແລຫຼັງສົ່ງມອບ ອັບເດດ ແລະ ຂະຫຍາຍໄດ້ງ່າຍ",
+        },
+      ],
+    },
+    platforms: {
+      title: "ແພລດຟອມທີ່ພວກເຮົາຊ່ຽວຊານ",
+      subtitle: "ສະຖິຕິທີ່ສະແດງຄວາມຊ່ຽວຊານໃນການພັດທະນາ ແລະ ດູແລລະບົບ",
+      items: [
+        {
+          platform: "SST Enterprise CMS",
+          years: "8+ ປີ",
+          users: "1.2k+",
+          websites: "420+",
+          awards: "6 ລາງວັນ",
+          clients: "180+",
+          suitable: "ເໝາະສຳລັບອົງກອນທີ່ຕ້ອງການ CMS ທີ່ປອດໄພ ແລະ ຍືດຫຍຸ່ນ",
+        },
+        {
+          platform: "Commerce Suite",
+          years: "6+ ປີ",
+          users: "680+",
+          websites: "230+",
+          awards: "4 ລາງວັນ",
+          clients: "95+",
+          suitable: "ເໝາະສຳລັບທຸລະກິດຂາຍອອນໄລນ໌ທີ່ຕ້ອງການການຊຳລະເງິນຄົບວົງຈອນ",
+        },
+        {
+          platform: "Corporate Cloud",
+          years: "7+ ປີ",
+          users: "900+",
+          websites: "310+",
+          awards: "5 ລາງວັນ",
+          clients: "120+",
+          suitable: "ເໝາະສຳລັບອິນທຣາເນັດ/ພອດທັລ ເຊື່ອມຕໍ່ລະບົບພາຍໃນ",
+        },
+        {
+          platform: "Brand Experience",
+          years: "5+ ປີ",
+          users: "520+",
+          websites: "180+",
+          awards: "3 ລາງວັນ",
+          clients: "70+",
+          suitable: "ເໝາະສຳລັບແບຣນດ໌ທີ່ຕ້ອງການເວັບໄຊພາບລັກສະນະພຣີເມຍມ",
+        },
+        {
+          platform: "Data Insight Portal",
+          years: "4+ ປີ",
+          users: "350+",
+          websites: "140+",
+          awards: "2 ລາງວັນ",
+          clients: "40+",
+          suitable: "ເໝາະສຳລັບແດຊບອດ ແລະ ລາຍງານແບບເວລາຈິງ",
+        },
+      ],
+    },
+    services: {
+      title: "ບໍລິການຫຼັກຂອງພວກເຮົາ",
+      subtitle: "ຄົບວົງຈອນຕັ້ງແຕ່ກົນລະຍຸດ ຈົນເຖິງການດູແລລະຍະຍາວ",
+      items: [
+        "ທີ່ປຶກສາ ແລະ ວາງກົນລະຍຸດດິຈິຕອນ",
+        "ອອກແບບ UX/UI ແລະ ໂຄງສ້າງຂໍ້ມູນ",
+        "ພັດທະນາເວັບໄຊອົງກອນ ແລະ Web App",
+        "ປັບແຕ່ງໃຫ້ຮອງຮັບ SEO ແລະ ການໂຄສະນາອອນໄລນ໌",
+        "ດູແລໂຮສຕິ້ງ/ລະບົບ ດ້ວຍທີມຜູ້ຊ່ຽວຊານ",
+        "ວິເຄາະຂໍ້ມູນ ແລະ ວັດຜົນເຊິງທຸລະກິດ",
+      ],
+    },
+    packages: {
+      title: "ແພັກເກັດ SST INNOVATION Pro",
+      subtitle: "ປັບໄດ້ຕາມຂະໜາດທຸລະກິດ ພ້ອມການດູແລຫຼັງການຂາຍ",
+      items: [
+        {
+          name: "Package Small",
+          price: "ເລີ່ມຕົ້ນ 3,000 ບາດ",
+          description: "ເໝາະສຳລັບແບຣນດ໌ທີ່ຕ້ອງການ Landing Page ແບບມືອາຊີບ",
+          features: [
+            "ອອກແບບໜ້າດຽວ ຄົບທຸກສ່ວນ",
+            "ຮອງຮັບມືຖື ແລະ SEO ພື້ນຖານ",
+            "ຟອມຕິດຕໍ່ + Analytics",
+            "ສົ່ງມອບພາຍໃນ 14 ວັນ",
+            "ຊ່ວຍເຫຼືອຫຼັງສົ່ງມອບ 30 ວັນ",
+          ],
+          badge: "ສຳລັບທຸລະກິດຂະໜາດນ້ອຍ",
+        },
+        {
+          name: "Package Business",
+          price: "ເລີ່ມຕົ້ນ 10,000 ບາດ",
+          description: "ເວັບໄຊອົງກອນ 6-8 ໜ້າ ພ້ອມລະບົບຈັດການເນື້ອຫາ",
+          features: [
+            "ອອກແບບຕາມແບຣນດ໌",
+            "CMS ສຳລັບຈັດການເນື້ອຫາ",
+            "ເຊື່ອມຕໍ່ Social ແລະ ແຜນທີ່",
+            "ປັບແຕ່ງ SEO ເຊິງເລິກ",
+            "ບໍລິການດູແລລາຍເດືອນ",
+          ],
+          badge: "ສຳລັບທຸລະກິດກຳລັງເຕີບໂຕ",
+        },
+        {
+          name: "Business Plus+",
+          price: "ເລີ່ມຕົ້ນ 50,000 ບາດ",
+          description: "ຮອງຮັບຟີເຈີສຳລັບອົງກອນ ແລະ ການເຊື່ອມຕໍ່ລະບົບພາຍໃນ",
+          features: [
+            "ວິເຄາະ UX/UI ເຊິງເລິກ",
+            "ລະບົບສະມາຊິກ/ພອດທັລ",
+            "ຮອງຮັບຫຼາຍພາສາ ແລະ ຫຼາຍສາຂາ",
+            "ເພີ່ມຟີເຈີຕາມຄວາມຕ້ອງການ",
+            "ບໍລິການດູແລລາຍເດືອນ",
+          ],
+          badge: "ສຳລັບອົງກອນຂະໜາດໃຫຍ່",
+        },
+      ],
+    },
+    portfolio: {
+      title: "ແມ່ແບບເວັບໄຊຂອງພວກເຮົາ",
+      subtitle: "ຕົວຢ່າງແມ່ແບບເວັບໄຊຈາກຫຼາກຫຼາຍອຸດສາຫະກຳ",
+      items: [
+        { title: "Riviera Hotels", category: "Hospitality" },
+        { title: "Siam Logistics", category: "Logistics" },
+        { title: "Metro Healthcare", category: "Healthcare" },
+        { title: "Orchid Finance", category: "Finance" },
+        { title: "Aurora Education", category: "Education" },
+        { title: "Atlas Manufacturing", category: "Manufacturing" },
+      ],
+    },
+    contact: {
+      title: "ເລີ່ມຕົ້ນໂຄງການຂອງທ່ານ",
+      subtitle: "ທີມທີ່ປຶກສາຈະຕອບກັບພາຍໃນ 1 ວັນເຮັດວຽກ",
+      detailsTitle: "ຂໍ້ມູນຕິດຕໍ່",
+      detailsSubtitle: "ຕິດຕໍ່ທີມງານໄດ້ໂດຍກົງ ຫຼື ຜ່ານ LINE ສຳລັບງານດ່ວນ",
+      name: "ຊື່-ນາມສະກຸນ",
+      phone: "ເບີໂທ",
+      email: "ອີເມວ",
+      message: "ລາຍລະອຽດທີ່ຕ້ອງການ",
+      submit: "ສົ່ງຂໍ້ຄວາມ",
+      success: "ຂອບໃຈທີ່ຕິດຕໍ່ ພວກເຮົາຈະຕິດຕໍ່ກັບໄປໄວໆນີ້",
+      sending: "ກຳລັງສົ່ງ...",
+    },
+    additional: {
+      title: "ບໍລິການເພີ່ມເຕີມ",
+      subtitle: "ເສີມຄວາມແຂງແຮງໃຫ້ເວັບໄຊຂອງທ່ານແບບຄົບວົງຈອນ",
+      items: [
+        "ໂຮສຕິ້ງພ້ອມໃຊ້ງານ + ໂຄງສ້າງ Cloud ພື້ນຖານ",
+        "ອອກແບບລະບົບສຳລັບອົງກອນ",
+        "ປັບປຸງຄວາມໄວ ແລະ ຄວາມປອດໄພ",
+        "ອອກແບບສື່ດິຈິຕອນ ແລະ ຄູ່ມືແບຣນດ໌",
+        "ດູແລລະບົບ ແລະ ແກ້ໄຂປັນຫາໄດ້ທັນທີ",
+      ],
+    },
+    footer: {
+      company: "ບໍລິສັດ ເອສເອສທີ ອິນໂນເວຊັນ ຈໍາກັດ",
+      address:
+        "ໂຄງການນັນທະນາກາເດັນ 139/32, ບ້ານກາງ, ເມືອງປະທຸມທານີ, ປະທຸມທານີ 12000",
+      phone: "0843374982",
+      email: "sstaminno@gmail.com",
+      line: "LINE: @974qhtym",
+      note: "ໂຊລູຊັນດິຈິຕອນລະດັບອົງກອນ: ເວັບໄຊ, ແອັບ, ແລະ ລະບົບພາຍໃນ",
     },
   },
 };

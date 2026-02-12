@@ -47,6 +47,12 @@ const companyInfo = {
     description:
       "SST INNOVATION provides professional website development, dormitory and resort management systems, and complete company registration services to support your business growth.",
   },
+  lo: {
+    name: "SST INNOVATION Co., Ltd.",
+    alternateName: "ບໍລິສັດ ເອສເອສທີ ອິນໂນເວຊັນ ຈໍາກັດ",
+    description:
+      "SST INNOVATION ໃຫ້ບໍລິການພັດທະນາເວັບໄຊ ລະບົບຫໍພັກ ແລະ ບໍລິການຈົດທະບຽນບໍລິສັດແບບຄົບວົງຈອນ ເພື່ອຊ່ວຍໃຫ້ທຸລະກິດເຕີບໂຕ.",
+  },
 };
 
 function uniqueGraphId(id: string) {
@@ -97,7 +103,7 @@ export default function StructuredData({
                 telephone: CONTACT.phoneE164,
                 contactType: "customer support",
                 email: CONTACT.email,
-                availableLanguage: ["th", "en"],
+                availableLanguage: ["th", "en", "lo"],
               },
             ],
           }
