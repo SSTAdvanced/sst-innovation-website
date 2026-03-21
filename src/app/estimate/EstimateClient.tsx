@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { estimatorConfig, type EstimatorService } from "@/lib/estimateConfig";
 import { trackGaEvent } from "@/lib/ga";
 import { logEvent } from "@/lib/eventLogger";
@@ -58,6 +59,11 @@ export default function EstimateClient({
   locale: "th" | "en" | "lo";
 }) {
   const router = useRouter();
+  const REQUEST_TIMEOUT_MS = 15_000;
+  const SERVICE_CHANGE_THROTTLE_MS = 300;
+  const estimateInFlightRef = useRef(false);
+  const leadInFlightRef = useRef(false);
+  const lastServiceChangeRef = useRef(0);
   const serviceLabels = serviceLabelsByLocale[locale];
 
   type WebsiteFeatureKey = keyof typeof estimatorConfig.website.features;
@@ -190,6 +196,14 @@ export default function EstimateClient({
   };
 
   const onServiceChange = (value: EstimatorService) => {
+    const now = Date.now();
+    if (value === service) {
+      return;
+    }
+    if (now - lastServiceChangeRef.current < SERVICE_CHANGE_THROTTLE_MS) {
+      return;
+    }
+    lastServiceChangeRef.current = now;
     setService(value);
     setEstimateResult(null);
     setEstimateError(null);
@@ -199,13 +213,20 @@ export default function EstimateClient({
 
   const submitEstimate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (estimateInFlightRef.current || estimateStatus === "loading") {
+      return;
+    }
+    estimateInFlightRef.current = true;
     setEstimateStatus("loading");
     setEstimateError(null);
     setLeadStatus("idle");
     setLeadError(null);
     trackGaEvent("estimate_submit", { service });
 
+    const controller = new AbortController();
+    let timeoutId: number | null = null;
     try {
+      timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       const response = await fetch("/api/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -213,6 +234,7 @@ export default function EstimateClient({
           service,
           inputs: inputPayload,
         }),
+        signal: controller.signal,
       });
       const data = await response.json();
       if (!response.ok || !data?.ok) {
@@ -223,8 +245,20 @@ export default function EstimateClient({
         priceMin: data?.priceMin ?? 0,
         priceMax: data?.priceMax ?? 0,
       });
+      setLeadStatus("idle");
+      setLeadError(null);
+      setLeadRef(null);
       setEstimateStatus("idle");
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setEstimateError(
+          locale === "th"
+            ? "การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง"
+            : "Request timed out. Please try again."
+        );
+        setEstimateStatus("error");
+        return;
+      }
       const message =
         error instanceof Error
           ? error.message
@@ -233,20 +267,32 @@ export default function EstimateClient({
             : "Estimate failed";
       setEstimateError(message);
       setEstimateStatus("error");
+    } finally {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+      estimateInFlightRef.current = false;
     }
   };
 
   const submitLead = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (leadInFlightRef.current || leadStatus === "loading") {
+      return;
+    }
     if (!estimateResult) {
       return;
     }
+    leadInFlightRef.current = true;
     setLeadFormOpen(false);
     setLeadStatus("loading");
     setLeadError(null);
     setLeadRef(null);
 
+    const controller = new AbortController();
+    let timeoutId: number | null = null;
     try {
+      timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       const response = await fetch("/api/estimate/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -262,6 +308,7 @@ export default function EstimateClient({
           priceMax: estimateResult.priceMax,
           startedAt: leadStartedAt,
         }),
+        signal: controller.signal,
       });
       const data = await response.json();
       if (!response.ok || !data?.ok) {
@@ -278,6 +325,15 @@ export default function EstimateClient({
       setLeadStatus("success");
       trackGaEvent("lead_submit", { service });
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        setLeadError(
+          locale === "th"
+            ? "การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง"
+            : "Request timed out. Please try again."
+        );
+        setLeadStatus("error");
+        return;
+      }
       const message =
         error instanceof Error
           ? error.message
@@ -286,6 +342,11 @@ export default function EstimateClient({
             : "Lead submission failed";
       setLeadError(message);
       setLeadStatus("error");
+    } finally {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+      leadInFlightRef.current = false;
     }
   };
 
@@ -740,7 +801,8 @@ export default function EstimateClient({
             <button
               type="submit"
               disabled={estimateStatus === "loading"}
-              className="inline-flex w-full flex-1 items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+              aria-busy={estimateStatus === "loading"}
+              className="inline-flex min-h-11 w-full flex-1 items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
             >
               {estimateStatus === "loading"
                 ? locale === "th"
@@ -751,12 +813,12 @@ export default function EstimateClient({
             {estimateResult ? (
               <button
                 type="button"
-                disabled={estimateStatus === "loading"}
+                disabled={estimateStatus === "loading" || leadStatus === "loading"}
                 onClick={() => {
                   setLeadStartedAt(Date.now());
                   setLeadFormOpen(true);
                 }}
-                className="inline-flex w-full flex-1 items-center justify-center rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-3 text-xs font-semibold text-blue-900 shadow-sm transition hover:from-blue-100 hover:to-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-h-11 w-full flex-1 items-center justify-center rounded-full border border-blue-200 bg-gradient-to-r from-blue-50 to-cyan-50 px-6 py-3 text-sm font-semibold text-blue-900 shadow-sm transition hover:from-blue-100 hover:to-cyan-100 disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {locale === "th"
                   ? "กรอกข้อมูลรับใบเสนอราคา"
@@ -782,11 +844,15 @@ export default function EstimateClient({
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="flex items-center gap-4">
                   <div className="grid h-12 w-12 place-items-center rounded-2xl border border-slate-200 bg-white shadow-sm sm:h-14 sm:w-14">
-                    <img
+                    <Image
                       src={QUOTE_LOGO_SRC}
                       alt="SST INNOVATION"
+                      width={56}
+                      height={56}
                       className="h-9 w-9 object-contain sm:h-10 sm:w-10"
+                      unoptimized
                       loading="lazy"
+                      fetchPriority="low"
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -1045,14 +1111,15 @@ export default function EstimateClient({
                     <button
                       type="button"
                       onClick={() => setLeadFormOpen(false)}
-                      className="inline-flex w-full items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-xs font-semibold text-slate-900 transition hover:bg-slate-50 sm:w-auto"
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-50 sm:w-auto"
                     >
                       {locale === "th" ? "ยกเลิก" : "Cancel"}
                     </button>
                     <button
                       type="submit"
                       disabled={leadStatus === "loading"}
-                      className="inline-flex w-full items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto"
+                      aria-busy={leadStatus === "loading"}
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400 sm:w-auto"
                     >
                       {leadStatus === "loading"
                         ? locale === "th"

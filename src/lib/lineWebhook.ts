@@ -22,6 +22,10 @@ export type LeadNotificationPayload = {
   priceMax?: number | null;
 };
 
+const WEBHOOK_TOTAL_TIMEOUT_MS = 7_000;
+const WEBHOOK_ATTEMPT_TIMEOUT_MS = 2_500;
+const WEBHOOK_RETRY_DELAY_MS = 200;
+
 function readEnv(name: string): string | null {
   const raw = process.env[name];
   if (!raw) return null;
@@ -153,19 +157,32 @@ export async function notifyLineViaCloudflare(
     return "failed";
   }
   const errors: unknown[] = [];
+  const startedAt = Date.now();
 
   for (const target of targets) {
+    const elapsed = Date.now() - startedAt;
+    const remaining = WEBHOOK_TOTAL_TIMEOUT_MS - elapsed;
+    if (remaining <= 0) {
+      break;
+    }
+
     try {
-      await attempt(target, 6000);
+      await attempt(target, Math.min(WEBHOOK_ATTEMPT_TIMEOUT_MS, remaining));
       return "sent";
     } catch (error) {
       errors.push(error);
     }
 
     // One retry (worker cold start / transient network)
-    await new Promise((r) => setTimeout(r, 300));
+    await new Promise((r) => setTimeout(r, WEBHOOK_RETRY_DELAY_MS));
+
+    const retryElapsed = Date.now() - startedAt;
+    const retryRemaining = WEBHOOK_TOTAL_TIMEOUT_MS - retryElapsed;
+    if (retryRemaining <= 0) {
+      break;
+    }
     try {
-      await attempt(target, 6000);
+      await attempt(target, Math.min(WEBHOOK_ATTEMPT_TIMEOUT_MS, retryRemaining));
       return "sent";
     } catch (error) {
       errors.push(error);

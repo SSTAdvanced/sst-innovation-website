@@ -22,6 +22,8 @@ const MAX_EMAIL_LENGTH = 120;
 const MAX_MESSAGE_LENGTH = 2000;
 const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX = 5;
+const RATE_LIMIT_MAX_ENTRIES = 2_000;
+const RATE_LIMIT_CLEANUP_INTERVAL = 50;
 const SPAM_ERROR = "Spam detected";
 
 type RateLimitEntry = {
@@ -30,6 +32,7 @@ type RateLimitEntry = {
 };
 
 const rateLimitByIp = new Map<string, RateLimitEntry>();
+let rateLimitCheckCount = 0;
 
 function getClientIp(req: Request): string {
   const forwardedFor = req.headers.get("x-forwarded-for");
@@ -50,6 +53,38 @@ function isRateLimited(ip: string, now: number): boolean {
   return entry.count > RATE_LIMIT_MAX;
 }
 
+function cleanupRateLimitMap(now: number) {
+  rateLimitCheckCount += 1;
+  const shouldSweepByInterval = rateLimitCheckCount % RATE_LIMIT_CLEANUP_INTERVAL === 0;
+  const shouldSweepBySize = rateLimitByIp.size > RATE_LIMIT_MAX_ENTRIES;
+
+  if (!shouldSweepByInterval && !shouldSweepBySize) {
+    return;
+  }
+
+  for (const [ip, entry] of rateLimitByIp.entries()) {
+    if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+      rateLimitByIp.delete(ip);
+    }
+  }
+
+  if (rateLimitByIp.size <= RATE_LIMIT_MAX_ENTRIES) {
+    return;
+  }
+
+  const staleFirst = Array.from(rateLimitByIp.entries()).sort(
+    (a, b) => a[1].windowStart - b[1].windowStart
+  );
+  const overflow = rateLimitByIp.size - RATE_LIMIT_MAX_ENTRIES;
+  for (let index = 0; index < overflow; index += 1) {
+    const stale = staleFirst[index];
+    if (!stale) {
+      break;
+    }
+    rateLimitByIp.delete(stale[0]);
+  }
+}
+
 function isTooFast(startedAt: string | number | undefined, now: number): boolean {
   if (startedAt === undefined || startedAt === null || startedAt === "") {
     return true;
@@ -66,6 +101,7 @@ export async function POST(req: Request) {
   const requestId = crypto.randomUUID();
   const now = Date.now();
   const ip = getClientIp(req);
+  cleanupRateLimitMap(now);
 
   try {
     const body = (await req.json().catch(() => null)) as LeadPayload | null;

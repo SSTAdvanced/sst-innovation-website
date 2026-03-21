@@ -11,6 +11,7 @@ import { formatLeadRef } from "@/lib/leadRef";
 export default function ContactPageClient() {
   const { lang } = useLang();
   const copy = getCopy(lang);
+  const REQUEST_TIMEOUT_MS = 15_000;
 
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export default function ContactPageClient() {
       }
   >({ open: false });
   const submitModalTimerRef = useRef<number | null>(null);
+  const submitInFlightRef = useRef(false);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -46,12 +48,19 @@ export default function ContactPageClient() {
       : "text-xs uppercase tracking-[0.2em] text-slate-500";
   const submitClass =
     lang === "th"
-      ? "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
-      : "inline-flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
+      ? "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+      : "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
   const submitModalVariant = submitModal.open ? submitModal.variant : null;
+  const setStartedAtIfMissing = () => {
+    setFormData((prev) => (prev.startedAt ? prev : { ...prev, startedAt: Date.now() }));
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitInFlightRef.current || status === "loading") {
+      return;
+    }
+    submitInFlightRef.current = true;
     trackGaEvent("contact_submit_attempt", { locale: lang });
     setStatus("loading");
     setErrorMessage(null);
@@ -64,11 +73,15 @@ export default function ContactPageClient() {
       message: undefined,
     });
 
+    const controller = new AbortController();
+    let timeoutId: number | null = null;
     try {
+      timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, locale: lang }),
+        signal: controller.signal,
       });
       const data = await response.json().catch(() => null);
 
@@ -102,8 +115,14 @@ export default function ContactPageClient() {
         startedAt: null,
       });
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Submission failed. Please try again.";
+      const isAbort = error instanceof DOMException && error.name === "AbortError";
+      const message = isAbort
+        ? lang === "th"
+          ? "การเชื่อมต่อใช้เวลานานเกินไป กรุณาลองใหม่อีกครั้ง"
+          : "Request timed out. Please try again."
+        : error instanceof Error
+          ? error.message
+          : "Submission failed. Please try again.";
       trackGaEvent("contact_submit_error", { locale: lang });
       setErrorMessage(message);
       setStatus("error");
@@ -118,6 +137,11 @@ export default function ContactPageClient() {
               : "Failed to send",
         message,
       });
+    } finally {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
+      submitInFlightRef.current = false;
     }
   };
 
@@ -178,7 +202,7 @@ export default function ContactPageClient() {
         <div className="mx-auto w-full max-w-6xl px-6">
           <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-card-soft">
-              <form className="space-y-4" onSubmit={handleSubmit}>
+              <form className="space-y-4" onSubmit={handleSubmit} onFocusCapture={setStartedAtIfMissing}>
                 <div>
                   <label className={formLabelClass} htmlFor="contact-name">
                     {copy.contact.name}
@@ -271,7 +295,12 @@ export default function ContactPageClient() {
                   onChange={(event) => setFormData({ ...formData, company: event.target.value })}
                 />
 
-                <button type="submit" className={submitClass} disabled={status === "loading"}>
+                <button
+                  type="submit"
+                  className={submitClass}
+                  disabled={status === "loading"}
+                  aria-busy={status === "loading"}
+                >
                   {status === "loading" ? copy.contact.sending : copy.contact.submit}
                 </button>
 

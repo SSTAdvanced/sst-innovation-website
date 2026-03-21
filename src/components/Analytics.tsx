@@ -1,5 +1,6 @@
 import Script from "next/script";
 import GaPageViewTracker from "@/components/GaPageViewTracker";
+import CoreWebVitalsTracker from "@/components/CoreWebVitalsTracker";
 
 const GA4_ID = process.env.NEXT_PUBLIC_GA4_ID ?? "";
 const hasGa4Id = /^G-[A-Z0-9]+$/i.test(GA4_ID);
@@ -22,6 +23,7 @@ gtag('js', new Date());
 gtag('config', '${GA4_ID}', { anonymize_ip: true, send_page_view: false });`}
       </Script>
       <GaPageViewTracker gaId={GA4_ID} />
+      <CoreWebVitalsTracker />
     </>
   );
 }

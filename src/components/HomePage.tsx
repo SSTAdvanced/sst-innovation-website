@@ -2,12 +2,17 @@
 import {
   ArrowRight,
   Award,
+  CheckCircle2,
   Layers,
+  ShoppingBag,
   ShieldCheck,
   Sparkles,
+  Truck,
+  UtensilsCrossed,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useState } from "react";
 import PackageCard from "@/components/PackageCard";
 import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
@@ -18,6 +23,11 @@ export default function HomePage() {
   const { lang } = useLang();
 
   const copy = getCopy(lang);
+  const [loadedImageMap, setLoadedImageMap] = useState<Record<string, boolean>>({});
+  const markImageLoaded = useCallback((src: string) => {
+    setLoadedImageMap((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
+  }, []);
+  const isImageLoaded = (src: string) => Boolean(loadedImageMap[src]);
   const portfolioShowcase = [
     {
       src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/voltatechth.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3ZvbHRhdGVjaHRoLmpwZyIsImlhdCI6MTc2OTYwMDUwOCwiZXhwIjoxODAxMTM2NTA4fQ.mqTlYZiL5qiVIZpmVmhwXEc_zs-RkY9b2C1DX5mFihc",
@@ -41,6 +51,63 @@ export default function HomePage() {
     altTh: "ภาพตัวอย่างบริการและเทมเพลตเว็บไซต์",
     altEn: "Services and website templates showcase",
   } as const;
+  const posShowcase = [
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/1585858.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uLzE1ODU4NTgucG5nIiwiaWF0IjoxNzc0MDgzNzUwLCJleHAiOjE4MDU2MTk3NTB9.yRlI5N7tWxCoyeIcg5rV0i18bl-kbCqeGwMnrwOJ9t8",
+      altTh: "ภาพตัวอย่างระบบ POS สำหรับร้านอาหารและคาเฟ่",
+      altEn: "POS system example for restaurants and cafes",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/256633.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uLzI1NjYzMy5wbmciLCJpYXQiOjE3NzQwODM3OTEsImV4cCI6MTgwNTYxOTc5MX0.knU6qU6ajXaJEVVC0VV3-xsJcSUTmVSmNXXpRMioez4",
+      altTh: "ภาพตัวอย่างการใช้งาน POS บนมือถือ",
+      altEn: "POS mobile usage example",
+    },
+  ] as const;
+  const posCopy =
+    lang === "th"
+      ? {
+          eyebrow: "POS สำหรับร้านอาหารและค้าปลีก",
+          title:
+            "🚀 เปลี่ยนร้านของคุณให้ “ขายคล่อง จัดการง่าย” ด้วยระบบ POS ครบจบในที่เดียว!",
+          body: "ไม่ว่าจะขายแบบ 🍽️ ทานที่ร้าน หรือ 🥡 กลับบ้าน / เดลิเวอรี่ ระบบของเราช่วยให้คุณจัดการทุกออเดอร์ได้อย่างรวดเร็ว แม่นยำ และมืออาชีพ",
+          featureTitle: "✨ ฟีเจอร์เด่นที่ร้านคุณต้องมี",
+          features: [
+            "✔️ จัดการโต๊ะอาหารแบบเรียลไทม์",
+            "✔️ รองรับออเดอร์ทานที่ร้าน / กลับบ้าน / เดลิเวอรี่",
+            "✔️ สรุปยอดขายอัตโนมัติ ดูรายงานได้ทันที",
+            "✔️ ใช้งานง่าย รองรับมือถือ ไม่ต้องมีอุปกรณ์เพิ่ม",
+          ],
+          audienceTitle: "🔥 เหมาะกับ",
+          audience: "ร้านอาหาร • คาเฟ่ • ร้านขายของทั่วไป",
+          ctaLead: "เริ่มต้นง่าย ใช้งานได้ทันที ไม่ต้องลงทุนสูง! ทดลองใช้ฟรีทันที!",
+          ctaFree: "👉 ไม่ต้องจ่ายค่าเริ่มต้น",
+          trialLabel: "🧾 ทดลองใช้งานระบบ",
+          trialCta: "👉 http://sstinnovate.com",
+          modeDineIn: "ทานที่ร้าน",
+          modeTakeaway: "กลับบ้าน",
+          modeDelivery: "เดลิเวอรี่",
+        }
+      : {
+          eyebrow: "POS for Restaurants & Retail",
+          title: "Sell faster and manage easier with one complete POS solution",
+          body: "From dine-in to takeaway and delivery, manage every order with speed, accuracy, and confidence.",
+          featureTitle: "Key features",
+          features: [
+            "Real-time table management",
+            "Supports dine-in / takeaway / delivery orders",
+            "Automatic sales summary and instant reporting",
+            "Mobile-friendly and easy to use",
+          ],
+          audienceTitle: "Best for",
+          audience: "Restaurants • Cafes • Retail shops",
+          ctaLead: "Start quickly with low setup cost and immediate usability.",
+          ctaFree: "No upfront fee",
+          trialLabel: "Try the system",
+          trialCta: "http://sstinnovate.com",
+          modeDineIn: "Dine-in",
+          modeTakeaway: "Takeaway",
+          modeDelivery: "Delivery",
+        };
   const eyebrowClass =
     lang === "th"
       ? "text-xs font-semibold text-blue-600"
@@ -55,12 +122,12 @@ export default function HomePage() {
       : "rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-blue-700";
   const ctaPrimaryClass =
     lang === "th"
-      ? "inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold text-slate-900 shadow-lg"
-      : "inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-lg";
+      ? "inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold text-slate-900 shadow-lg"
+      : "inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-slate-900 shadow-lg";
   const ctaSecondaryClass =
     lang === "th"
-      ? "inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold text-white"
-      : "inline-flex items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white";
+      ? "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold text-white"
+      : "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white";
 
   const seoContent =
     lang === "th"
@@ -511,13 +578,21 @@ export default function HomePage() {
                   {sectionIndex === 1 ? (
                     <div className="mb-10 md:mb-12">
                       <div className="relative">
+                        {!isImageLoaded(servicesShowcase.src) ? (
+                          <div className="absolute inset-0 animate-pulse rounded-2xl bg-slate-200/70" />
+                        ) : null}
                         <Image
                           src={servicesShowcase.src}
                           alt={lang === "th" ? servicesShowcase.altTh : servicesShowcase.altEn}
                           width={1400}
                           height={560}
-                          className="h-auto w-full object-cover"
-                          priority
+                          unoptimized
+                          loading="lazy"
+                          fetchPriority="low"
+                          className={`h-auto w-full object-cover transition-opacity duration-300 ${
+                            isImageLoaded(servicesShowcase.src) ? "opacity-100" : "opacity-0"
+                          }`}
+                          onLoad={() => markImageLoaded(servicesShowcase.src)}
                         />
                       </div>
                     </div>
@@ -570,7 +645,7 @@ export default function HomePage() {
                       {estimateHref ? (
                         <Link
                           href={estimateHref}
-                          className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
+                          className="inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-2 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-50"
                         >
                           {lang === "th" ? "ประมาณราคา" : "Estimate"}
                         </Link>
@@ -589,7 +664,8 @@ export default function HomePage() {
                         width={800}
                         height={520}
                         className="h-auto w-full"
-                        priority={sectionIndex === 1}
+                        loading="lazy"
+                        fetchPriority="low"
                       />
                       </div>
                     </div>
@@ -598,6 +674,100 @@ export default function HomePage() {
               </div>
               );
             })}
+          </div>
+        </section>
+
+        <section
+          id="pos-system"
+          className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 py-20 text-white"
+        >
+          <div className="pointer-events-none absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-cyan-400/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-28 right-0 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="relative mx-auto w-full max-w-6xl px-6">
+            <div className="grid items-start gap-8 lg:grid-cols-12">
+              <div className="space-y-6 lg:col-span-7">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                  {posCopy.eyebrow}
+                </p>
+                <h2 className="font-[var(--font-heading)] text-3xl font-semibold leading-tight text-white md:text-4xl">
+                  {posCopy.title}
+                </h2>
+                <p className="max-w-2xl text-base leading-relaxed text-slate-200">{posCopy.body}</p>
+
+                <div className="flex flex-wrap gap-3 text-xs font-semibold text-white/90">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                    <UtensilsCrossed className="h-4 w-4 text-cyan-300" />
+                    {posCopy.modeDineIn}
+                  </span>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                    <ShoppingBag className="h-4 w-4 text-cyan-300" />
+                    {posCopy.modeTakeaway}
+                  </span>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+                    <Truck className="h-4 w-4 text-cyan-300" />
+                    {posCopy.modeDelivery}
+                  </span>
+                </div>
+
+                <div className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+                  <h3 className="text-lg font-semibold text-white">{posCopy.featureTitle}</h3>
+                  <ul className="mt-4 grid gap-3 text-sm text-slate-100 md:grid-cols-2">
+                    {posCopy.features.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+              </div>
+
+              <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:col-span-5">
+                {posShowcase.map((item) => (
+                  <div
+                    key={item.src}
+                    className="relative aspect-[9/16] overflow-hidden rounded-3xl border border-white/15 bg-slate-900/60 shadow-xl"
+                  >
+                    {!isImageLoaded(item.src) ? (
+                      <div className="absolute inset-0 animate-pulse bg-slate-800/70" />
+                    ) : null}
+                    <Image
+                      src={item.src}
+                      alt={lang === "th" ? item.altTh : item.altEn}
+                      width={900}
+                      height={1200}
+                      unoptimized
+                      loading="lazy"
+                      fetchPriority="low"
+                      className={`h-full w-full object-cover object-[center_20%] transition-opacity duration-300 ${
+                        isImageLoaded(item.src) ? "opacity-100" : "opacity-0"
+                      }`}
+                      onLoad={() => markImageLoaded(item.src)}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="w-full rounded-3xl border border-cyan-300/30 bg-cyan-400/10 p-6 lg:col-span-7">
+                <p className="text-sm font-semibold text-cyan-200">{posCopy.audienceTitle}</p>
+                <p className="mt-2 text-base font-medium text-white">{posCopy.audience}</p>
+                <p className="mt-4 text-sm text-cyan-100">{posCopy.ctaLead}</p>
+                <p className="mt-1 text-sm font-semibold text-cyan-200">{posCopy.ctaFree}</p>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <span className="text-sm text-cyan-100">{posCopy.trialLabel}</span>
+                  <a
+                    href="http://sstinnovate.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+                  >
+                    {posCopy.trialCta}
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -749,14 +919,25 @@ export default function HomePage() {
                   key={item.src}
                   className="overflow-hidden rounded-3xl transition hover:-translate-y-1"
                 >
-                  <img
-                    src={item.src}
-                    alt={lang === "th" ? item.altTh : item.altEn}
-                    className="block h-56 w-full object-cover sm:h-60 md:h-56"
-                    loading="lazy"
-                    decoding="async"
-                    fetchPriority="low"
-                  />
+                  <div className="relative h-56 w-full sm:h-60 md:h-56">
+                    {!isImageLoaded(item.src) ? (
+                      <div className="absolute inset-0 animate-pulse bg-slate-200/70" />
+                    ) : null}
+                    <Image
+                      src={item.src}
+                      alt={lang === "th" ? item.altTh : item.altEn}
+                      width={1200}
+                      height={800}
+                      className={`block h-56 w-full object-cover transition-opacity duration-300 sm:h-60 md:h-56 ${
+                        isImageLoaded(item.src) ? "opacity-100" : "opacity-0"
+                      }`}
+                      unoptimized
+                      loading="lazy"
+                      fetchPriority="low"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      onLoad={() => markImageLoaded(item.src)}
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -1054,8 +1235,3 @@ export default function HomePage() {
     </>
   );
 }
-
-
-
-
-

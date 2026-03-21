@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale } from "@/lib/locale";
@@ -152,11 +153,16 @@ export default async function CorporateTemplatesPage() {
                   key={item.key}
                   className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-card-soft"
                 >
-                  <img
+                  <Image
                     src={item.src}
                     alt={meta.name}
+                    width={1200}
+                    height={720}
                     className="block h-64 w-full bg-white object-contain"
+                    unoptimized
                     loading="lazy"
+                    fetchPriority="low"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                   <div className="p-6">
                     <h2 className="text-lg font-semibold text-slate-900">{meta.name}</h2>

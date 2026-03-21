@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale } from "@/lib/locale";
@@ -162,11 +163,16 @@ export default async function EcommerceTemplatesPage() {
 
             <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-[0_22px_70px_-45px_rgba(15,23,42,0.55)]">
               <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-white p-4">
-                <img
+                <Image
                   src={showcaseImage.src}
                   alt={content.alt}
+                  width={1400}
+                  height={900}
                   className="block h-auto w-full rounded-2xl object-contain"
+                  unoptimized
                   loading="lazy"
+                  fetchPriority="low"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </div>
             </div>

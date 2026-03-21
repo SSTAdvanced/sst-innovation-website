@@ -10,28 +10,28 @@ import "./globals.css";
 const notoSansThai = Noto_Sans_Thai({
   subsets: ["latin", "thai"],
   variable: "--font-sans-thai",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
 const notoSerifThai = Noto_Serif_Thai({
   subsets: ["latin", "thai"],
   variable: "--font-serif-thai",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
 const notoSansLao = Noto_Sans_Lao({
   subsets: ["latin", "lao"],
   variable: "--font-sans-lao",
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["400", "500", "700"],
   display: "swap",
 });
 
 const notoSerifLao = Noto_Serif_Lao({
   subsets: ["latin", "lao"],
   variable: "--font-serif-lao",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
   display: "swap",
 });
 
