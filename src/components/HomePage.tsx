@@ -3,16 +3,15 @@ import {
   ArrowRight,
   Award,
   CheckCircle2,
+  Eye,
   Layers,
-  ShoppingBag,
   ShieldCheck,
   Sparkles,
-  Truck,
-  UtensilsCrossed,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import PackageCard from "@/components/PackageCard";
 import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
@@ -24,6 +23,9 @@ export default function HomePage() {
 
   const copy = getCopy(lang);
   const [loadedImageMap, setLoadedImageMap] = useState<Record<string, boolean>>({});
+  const [posModalView, setPosModalView] = useState<
+    "legacyImage" | "mobileImage" | "features" | "audience" | null
+  >(null);
   const markImageLoaded = useCallback((src: string) => {
     setLoadedImageMap((prev) => (prev[src] ? prev : { ...prev, [src]: true }));
   }, []);
@@ -45,6 +47,48 @@ export default function HomePage() {
       altEn: "Website example 3",
     },
   ] as const;
+  const customerLogoShowcase = [
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/-removebg-preview286820ca7b7bd098.png",
+      altTh: "โลโก้ลูกค้า 1",
+      altEn: "Customer logo 1",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/170805.jpg",
+      altTh: "โลโก้ลูกค้า 2",
+      altEn: "Customer logo 2",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/273695421_268573795416400_3348257750053601567_n.jpg",
+      altTh: "โลโก้ลูกค้า 3",
+      altEn: "Customer logo 3",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/302172088_153656683949594_8561758620400651951_n.jpg",
+      altTh: "โลโก้ลูกค้า 4",
+      altEn: "Customer logo 4",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/image.png",
+      altTh: "โลโก้ลูกค้า 5",
+      altEn: "Customer logo 5",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/Kinko-Logo.ai.png",
+      altTh: "โลโก้ลูกค้า 6",
+      altEn: "Customer logo 6",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/L&P99.png",
+      altTh: "โลโก้ลูกค้า 7",
+      altEn: "Customer logo 7",
+    },
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/PnnqgLmxn4atAvqhdUA9.png",
+      altTh: "โลโก้ลูกค้า 8",
+      altEn: "Customer logo 8",
+    },
+  ] as const;
 
   const servicesShowcase = {
     src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/templates-services.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3RlbXBsYXRlcy1zZXJ2aWNlcy5wbmciLCJpYXQiOjE3NzA3NDY4MTcsImV4cCI6MTgwMjI4MjgxN30.7Z2AeIBnYGjZCeZZvCGkxWjsqU379MIqvRRUpU040xg",
@@ -52,6 +96,11 @@ export default function HomePage() {
     altEn: "Services and website templates showcase",
   } as const;
   const posShowcase = [
+    {
+      src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/44557782.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uLzQ0NTU3NzgyLnBuZyIsImlhdCI6MTc3NDEwODgyNSwiZXhwIjoxODA1NjQ0ODI1fQ.zsvx6g--6oRsON5CkcmJp07wcx_XhARlNPM-bjQ2Uww",
+      altTh: "ภาพตัวอย่างระบบ POS แบบแนวนอน",
+      altEn: "Horizontal POS system showcase",
+    },
     {
       src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/1585858.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uLzE1ODU4NTgucG5nIiwiaWF0IjoxNzc0MDgzNzUwLCJleHAiOjE4MDU2MTk3NTB9.yRlI5N7tWxCoyeIcg5rV0i18bl-kbCqeGwMnrwOJ9t8",
       altTh: "ภาพตัวอย่างระบบ POS สำหรับร้านอาหารและคาเฟ่",
@@ -108,6 +157,47 @@ export default function HomePage() {
           modeTakeaway: "Takeaway",
           modeDelivery: "Delivery",
         };
+  const posPrimaryShowcase = posShowcase[0];
+  const posLegacyShowcase = posShowcase[1];
+  const posMobileShowcase = posShowcase[2];
+  const posLegacyPreviewButtonText = lang === "th" ? "รูปแบบมือถือ" : "View legacy image";
+  const posMobilePreviewButtonText = lang === "th" ? "รูปแบบมือถือ" : "View mobile image";
+  const posFeaturePreviewButtonText = lang === "th" ? "ฟีเจอร์เด่น" : "Key features";
+  const posAudiencePreviewButtonText = lang === "th" ? "เหมาะสำลับร้าน/ธุระกิจ" : "Best for shops/businesses";
+  const posPrimaryImageLinkText = lang === "th" ? "เปิดภาพเต็ม" : "Open full image";
+  const posTryButtonText = lang === "th" ? "ทดลองใช้งานระบบ" : "Try the system";
+  const posCloseLabel = lang === "th" ? "ปิด" : "Close";
+  const isPosModalOpen = posModalView !== null;
+  const posModalImage =
+    posModalView === "legacyImage"
+      ? posLegacyShowcase
+      : posModalView === "mobileImage"
+        ? posMobileShowcase
+        : null;
+  const posModalTitle =
+    posModalView === "legacyImage"
+      ? lang === "th"
+        ? "ภาพเดิมระบบ POS"
+        : "Legacy POS image"
+      : posModalView === "mobileImage"
+        ? lang === "th"
+          ? "ภาพระบบ POS บนมือถือ"
+          : "POS mobile image"
+        : posModalView === "features"
+          ? posCopy.featureTitle
+          : lang === "th"
+            ? "กลุ่มธุรกิจที่เหมาะกับ"
+            : "Suitable businesses";
+  const customerSectionEyebrow = lang === "th" ? "ลูกค้าของเรา" : "Our customers";
+  const customerSectionTitle =
+    lang === "th" ? "แบรนด์ที่ไว้วางใจเรา" : "Trusted by Leading Brands";
+  const customerSectionSubtitle =
+    lang === "th"
+      ? "พันธมิตรและลูกค้าจากหลากหลายธุรกิจ ที่ร่วมเติบโตไปกับ SST INNOVATION"
+      : "Partners and clients across industries who trust SST INNOVATION.";
+  const uniqueCustomerLogoShowcase = customerLogoShowcase.filter(
+    (logo, index, arr) => arr.findIndex((item) => item.src === logo.src) === index
+  );
   const eyebrowClass =
     lang === "th"
       ? "text-xs font-semibold text-blue-600"
@@ -128,6 +218,27 @@ export default function HomePage() {
     lang === "th"
       ? "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold text-white"
       : "inline-flex min-h-11 items-center gap-2 rounded-full border border-white/40 px-6 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white";
+
+  useEffect(() => {
+    if (!isPosModalOpen) {
+      return;
+    }
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setPosModalView(null);
+      }
+    };
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, [isPosModalOpen]);
 
   const seoContent =
     lang === "th"
@@ -694,79 +805,85 @@ export default function HomePage() {
                 </h2>
                 <p className="max-w-2xl text-base leading-relaxed text-slate-200">{posCopy.body}</p>
 
-                <div className="flex flex-wrap gap-3 text-xs font-semibold text-white/90">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
-                    <UtensilsCrossed className="h-4 w-4 text-cyan-300" />
-                    {posCopy.modeDineIn}
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
-                    <ShoppingBag className="h-4 w-4 text-cyan-300" />
-                    {posCopy.modeTakeaway}
-                  </span>
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
-                    <Truck className="h-4 w-4 text-cyan-300" />
-                    {posCopy.modeDelivery}
-                  </span>
-                </div>
-
-                <div className="rounded-3xl border border-white/15 bg-white/5 p-6 backdrop-blur">
-                  <h3 className="text-lg font-semibold text-white">{posCopy.featureTitle}</h3>
-                  <ul className="mt-4 grid gap-3 text-sm text-slate-100 md:grid-cols-2">
-                    {posCopy.features.map((item) => (
-                      <li key={item} className="flex items-start gap-2">
-                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-              </div>
-
-              <div className="grid auto-rows-fr gap-4 sm:grid-cols-2 lg:col-span-5">
-                {posShowcase.map((item) => (
-                  <div
-                    key={item.src}
-                    className="relative aspect-[9/16] overflow-hidden rounded-3xl border border-white/15 bg-slate-900/60 shadow-xl"
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setPosModalView("features")}
+                    className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-2xl border border-cyan-300/35 bg-gradient-to-b from-white/15 to-white/5 px-5 py-2.5 text-sm font-semibold text-cyan-50 shadow-[0_10px_24px_rgba(6,182,212,0.15)] backdrop-blur-md transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:border-cyan-200/70 hover:from-cyan-300/25 hover:to-cyan-200/10 sm:px-6"
                   >
-                    {!isImageLoaded(item.src) ? (
-                      <div className="absolute inset-0 animate-pulse bg-slate-800/70" />
-                    ) : null}
-                    <Image
-                      src={item.src}
-                      alt={lang === "th" ? item.altTh : item.altEn}
-                      width={900}
-                      height={1200}
-                      unoptimized
-                      loading="lazy"
-                      fetchPriority="low"
-                      className={`h-full w-full object-cover object-[center_20%] transition-opacity duration-300 ${
-                        isImageLoaded(item.src) ? "opacity-100" : "opacity-0"
-                      }`}
-                      onLoad={() => markImageLoaded(item.src)}
-                    />
-                  </div>
-                ))}
-              </div>
-
-              <div className="w-full rounded-3xl border border-cyan-300/30 bg-cyan-400/10 p-6 lg:col-span-7">
-                <p className="text-sm font-semibold text-cyan-200">{posCopy.audienceTitle}</p>
-                <p className="mt-2 text-base font-medium text-white">{posCopy.audience}</p>
-                <p className="mt-4 text-sm text-cyan-100">{posCopy.ctaLead}</p>
-                <p className="mt-1 text-sm font-semibold text-cyan-200">{posCopy.ctaFree}</p>
-                <div className="mt-5 flex flex-wrap items-center gap-3">
-                  <span className="text-sm text-cyan-100">{posCopy.trialLabel}</span>
+                    {posFeaturePreviewButtonText}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPosModalView("audience")}
+                    className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-2xl border border-cyan-300/35 bg-gradient-to-b from-white/15 to-white/5 px-5 py-2.5 text-sm font-semibold text-cyan-50 shadow-[0_10px_24px_rgba(6,182,212,0.15)] backdrop-blur-md transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:border-cyan-200/70 hover:from-cyan-300/25 hover:to-cyan-200/10 sm:px-6"
+                  >
+                    {posAudiencePreviewButtonText}
+                  </button>
                   <a
                     href="http://sstinnovate.com"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-white px-6 py-2 text-sm font-semibold text-slate-900 transition hover:-translate-y-0.5"
+                    className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-transparent bg-gradient-to-r from-cyan-300 to-blue-400 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_24px_rgba(56,189,248,0.35)] transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:from-cyan-200 hover:to-blue-300 sm:px-6"
                   >
-                    {posCopy.trialCta}
+                    {posTryButtonText}
                     <ArrowRight className="h-4 w-4" />
                   </a>
                 </div>
+
               </div>
+
+              <div className="space-y-4 lg:col-span-5">
+                <a
+                  href={posPrimaryShowcase.src}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group relative block aspect-[16/10] overflow-hidden rounded-3xl border border-white/15 bg-slate-900/60 shadow-xl"
+                >
+                  {!isImageLoaded(posPrimaryShowcase.src) ? (
+                    <div className="absolute inset-0 animate-pulse bg-slate-800/70" />
+                  ) : null}
+                  <Image
+                    src={posPrimaryShowcase.src}
+                    alt={lang === "th" ? posPrimaryShowcase.altTh : posPrimaryShowcase.altEn}
+                    width={900}
+                    height={1200}
+                    unoptimized
+                    loading="lazy"
+                    fetchPriority="low"
+                    className={`h-full w-full object-cover object-center transition-opacity duration-300 ${
+                      isImageLoaded(posPrimaryShowcase.src) ? "opacity-100" : "opacity-0"
+                    }`}
+                    onLoad={() => markImageLoaded(posPrimaryShowcase.src)}
+                  />
+                  <span className="absolute bottom-3 right-3 inline-flex min-h-9 items-center rounded-full bg-white/95 px-4 py-1.5 text-xs font-semibold text-slate-900 shadow">
+                    {posPrimaryImageLinkText}
+                  </span>
+                </a>
+                <div className="flex flex-wrap gap-3 sm:gap-4">
+                  {posLegacyShowcase ? (
+                    <button
+                      type="button"
+                      onClick={() => setPosModalView("legacyImage")}
+                      className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-cyan-300/20"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {posLegacyPreviewButtonText}
+                    </button>
+                  ) : null}
+                  {posMobileShowcase ? (
+                    <button
+                      type="button"
+                      onClick={() => setPosModalView("mobileImage")}
+                      className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-cyan-300/20"
+                    >
+                      <Eye className="h-4 w-4" />
+                      {posMobilePreviewButtonText}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
             </div>
           </div>
         </section>
@@ -940,6 +1057,50 @@ export default function HomePage() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="our-customers" className="relative overflow-hidden bg-slate-950 py-20 text-white">
+          <div className="pointer-events-none absolute -left-24 top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-cyan-500/20 blur-3xl" />
+          <div className="pointer-events-none absolute -right-20 top-8 h-56 w-56 rounded-full bg-blue-500/20 blur-3xl" />
+          <div className="relative mx-auto w-full max-w-6xl px-6">
+            <div className="mx-auto max-w-3xl text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-cyan-200">
+                {customerSectionEyebrow}
+              </p>
+              <h2 className="mt-3 font-[var(--font-heading)] text-3xl font-semibold tracking-tight text-white md:text-4xl">
+                {customerSectionTitle}
+              </h2>
+              <p className="mt-3 text-sm text-slate-300 md:text-base">{customerSectionSubtitle}</p>
+            </div>
+
+            <div className="mt-10 overflow-hidden rounded-3xl border border-white/15 bg-white/5 p-4 md:p-6">
+              <div className="customers-logo-track flex w-max items-center gap-4 md:gap-6">
+                {uniqueCustomerLogoShowcase.map((logo) => (
+                  <div
+                    key={logo.src}
+                    className="h-28 w-52 overflow-hidden rounded-2xl border border-white/10 bg-white p-2 shadow-lg md:h-32 md:w-56 md:p-3"
+                  >
+                    {!isImageLoaded(logo.src) ? (
+                      <div className="h-full w-full animate-pulse bg-slate-200/70" />
+                    ) : null}
+                    <Image
+                      src={logo.src}
+                      alt={lang === "th" ? logo.altTh : logo.altEn}
+                      width={260}
+                      height={140}
+                      unoptimized
+                      loading="lazy"
+                      fetchPriority="low"
+                      className={`h-full w-full object-contain transition-opacity duration-300 ${
+                        isImageLoaded(logo.src) ? "opacity-100" : "opacity-0"
+                      }`}
+                      onLoad={() => markImageLoaded(logo.src)}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -1232,6 +1393,103 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+      {isPosModalOpen ? (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6">
+          <button
+            type="button"
+            aria-label={posCloseLabel}
+            onClick={() => setPosModalView(null)}
+            className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"
+          />
+          <div
+            className={`relative z-10 w-full rounded-3xl border border-cyan-200/30 bg-slate-900 p-4 shadow-2xl ${
+              posModalImage ? "max-w-sm" : "max-w-3xl"
+            }`}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-sm font-semibold text-cyan-100">{posModalTitle}</p>
+              <button
+                type="button"
+                aria-label={posCloseLabel}
+                onClick={() => setPosModalView(null)}
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cyan-200/30 text-cyan-100 transition hover:bg-cyan-300/20"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            {posModalImage ? (
+              <div className="relative aspect-[9/16] overflow-hidden rounded-2xl border border-cyan-200/20">
+                {!isImageLoaded(posModalImage.src) ? (
+                  <div className="absolute inset-0 animate-pulse bg-slate-800/70" />
+                ) : null}
+                <Image
+                  src={posModalImage.src}
+                  alt={lang === "th" ? posModalImage.altTh : posModalImage.altEn}
+                  width={900}
+                  height={1200}
+                  unoptimized
+                  loading="lazy"
+                  fetchPriority="low"
+                  className={`h-full w-full object-cover object-[center_20%] transition-opacity duration-300 ${
+                    isImageLoaded(posModalImage.src) ? "opacity-100" : "opacity-0"
+                  }`}
+                  onLoad={() => markImageLoaded(posModalImage.src)}
+                />
+              </div>
+            ) : posModalView === "features" ? (
+              <div className="rounded-2xl border border-white/15 bg-white/5 p-6 backdrop-blur">
+                <ul className="grid gap-3 text-sm text-slate-100 md:grid-cols-2">
+                  {posCopy.features.map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-cyan-300" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-cyan-300/30 bg-cyan-400/10 p-6">
+                <p className="text-sm font-semibold text-cyan-200">{posCopy.audienceTitle}</p>
+                <p className="mt-2 text-base font-medium text-white">{posCopy.audience}</p>
+                <p className="mt-4 text-sm text-cyan-100">{posCopy.ctaLead}</p>
+                <p className="mt-1 text-sm font-semibold text-cyan-200">{posCopy.ctaFree}</p>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                  <a
+                    href="http://sstinnovate.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:bg-cyan-300/20"
+                  >
+                    {posTryButtonText}
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      ) : null}
+      <style jsx global>{`
+        @keyframes customers-pan {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-18%);
+          }
+        }
+
+        .customers-logo-track {
+          animation: customers-pan 18s ease-in-out infinite alternate;
+          will-change: transform;
+        }
+
+        @media (max-width: 768px) {
+          .customers-logo-track {
+            animation-duration: 14s;
+          }
+        }
+      `}</style>
     </>
   );
 }
