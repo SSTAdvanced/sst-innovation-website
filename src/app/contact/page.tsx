@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import ContactPageClient from "@/app/contact/ContactPageClient";
 import { getRequestedLocale } from "@/lib/locale";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://websst.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sstinnovation.vercel.app";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestedLocale();

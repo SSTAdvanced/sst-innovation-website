@@ -5,7 +5,7 @@ import ServiceLinks from "@/components/ServiceLinks";
 import StructuredData from "@/components/StructuredData";
 import { getRequestedLocale } from "@/lib/locale";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://websst.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sstinnovation.vercel.app";
 
 type ContentSection = {
   h2: string;

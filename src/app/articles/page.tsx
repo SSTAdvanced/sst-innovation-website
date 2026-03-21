@@ -4,7 +4,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ServiceLinks from "@/components/ServiceLinks";
 import { getRequestedLocale } from "@/lib/locale";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://websst.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://sstinnovation.vercel.app";
 
 const content = {
   th: {
