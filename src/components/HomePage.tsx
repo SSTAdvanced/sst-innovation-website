@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import PackageCard from "@/components/PackageCard";
 import { useLang } from "@/components/LangContext";
 import { getCopy } from "@/lib/i18n";
@@ -47,7 +47,9 @@ export default function HomePage() {
       altEn: "Website example 3",
     },
   ] as const;
-  const customerLogoShowcase = [
+  const customerLogoShowcase = useMemo(
+    () =>
+      [
     {
       src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/public/SST%20Our%20customer%20logo/-removebg-preview286820ca7b7bd098.png",
       altTh: "โลโก้ลูกค้า 1",
@@ -88,7 +90,9 @@ export default function HomePage() {
       altTh: "โลโก้ลูกค้า 8",
       altEn: "Customer logo 8",
     },
-  ] as const;
+      ] as const,
+    []
+  );
 
   const servicesShowcase = {
     src: "https://kyjtswuxuyqzidnxvsax.supabase.co/storage/v1/object/sign/sstinnovation/templates-services.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8wZTI4NThhOC01MWIxLTQ0NTktYTg0My1kMjUzM2EyMTIxMTciLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJzc3Rpbm5vdmF0aW9uL3RlbXBsYXRlcy1zZXJ2aWNlcy5wbmciLCJpYXQiOjE3NzA3NDY4MTcsImV4cCI6MTgwMjI4MjgxN30.7Z2AeIBnYGjZCeZZvCGkxWjsqU379MIqvRRUpU040xg",
@@ -131,7 +135,7 @@ export default function HomePage() {
           ctaLead: "เริ่มต้นง่าย ใช้งานได้ทันที ไม่ต้องลงทุนสูง! ทดลองใช้ฟรีทันที!",
           ctaFree: "👉 ไม่ต้องจ่ายค่าเริ่มต้น",
           trialLabel: "🧾 ทดลองใช้งานระบบ",
-          trialCta: "👉 http://sstinnovate.com",
+          trialCta: "👉 https://sstinnovate.com",
           modeDineIn: "ทานที่ร้าน",
           modeTakeaway: "กลับบ้าน",
           modeDelivery: "เดลิเวอรี่",
@@ -152,7 +156,7 @@ export default function HomePage() {
           ctaLead: "Start quickly with low setup cost and immediate usability.",
           ctaFree: "No upfront fee",
           trialLabel: "Try the system",
-          trialCta: "http://sstinnovate.com",
+          trialCta: "https://sstinnovate.com",
           modeDineIn: "Dine-in",
           modeTakeaway: "Takeaway",
           modeDelivery: "Delivery",
@@ -195,8 +199,12 @@ export default function HomePage() {
     lang === "th"
       ? "พันธมิตรและลูกค้าจากหลากหลายธุรกิจ ที่ร่วมเติบโตไปกับ SST INNOVATION"
       : "Partners and clients across industries who trust SST INNOVATION.";
-  const uniqueCustomerLogoShowcase = customerLogoShowcase.filter(
-    (logo, index, arr) => arr.findIndex((item) => item.src === logo.src) === index
+  const uniqueCustomerLogoShowcase = useMemo(
+    () =>
+      customerLogoShowcase.filter(
+        (logo, index, arr) => arr.findIndex((item) => item.src === logo.src) === index
+      ),
+    [customerLogoShowcase]
   );
   const eyebrowClass =
     lang === "th"
@@ -240,8 +248,9 @@ export default function HomePage() {
     };
   }, [isPosModalOpen]);
 
-  const seoContent =
-    lang === "th"
+  const seoContent = useMemo(
+    () =>
+      lang === "th"
       ? {
           h1: "ยกระดับธุรกิจของคุณ ด้วยเว็บไซต์และระบบบริหารธุรกิจครบวงจร",
           sections: [
@@ -420,7 +429,9 @@ export default function HomePage() {
               ],
             },
           ],
-        };
+        },
+    [lang]
+  );
 
   /*
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -809,6 +820,8 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => setPosModalView("features")}
+                    aria-haspopup="dialog"
+                    aria-controls="pos-modal"
                     className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-2xl border border-cyan-300/35 bg-gradient-to-b from-white/15 to-white/5 px-5 py-2.5 text-sm font-semibold text-cyan-50 shadow-[0_10px_24px_rgba(6,182,212,0.15)] backdrop-blur-md transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:border-cyan-200/70 hover:from-cyan-300/25 hover:to-cyan-200/10 sm:px-6"
                   >
                     {posFeaturePreviewButtonText}
@@ -816,14 +829,16 @@ export default function HomePage() {
                   <button
                     type="button"
                     onClick={() => setPosModalView("audience")}
+                    aria-haspopup="dialog"
+                    aria-controls="pos-modal"
                     className="inline-flex min-h-11 touch-manipulation items-center justify-center rounded-2xl border border-cyan-300/35 bg-gradient-to-b from-white/15 to-white/5 px-5 py-2.5 text-sm font-semibold text-cyan-50 shadow-[0_10px_24px_rgba(6,182,212,0.15)] backdrop-blur-md transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:border-cyan-200/70 hover:from-cyan-300/25 hover:to-cyan-200/10 sm:px-6"
                   >
                     {posAudiencePreviewButtonText}
                   </button>
                   <a
-                    href="http://sstinnovate.com"
+                    href="https://sstinnovate.com"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-transparent bg-gradient-to-r from-cyan-300 to-blue-400 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_10px_24px_rgba(56,189,248,0.35)] transition duration-200 active:scale-[0.98] hover:-translate-y-0.5 hover:from-cyan-200 hover:to-blue-300 sm:px-6"
                   >
                     {posTryButtonText}
@@ -837,7 +852,7 @@ export default function HomePage() {
                 <a
                   href={posPrimaryShowcase.src}
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noopener noreferrer"
                   className="group relative block aspect-[16/10] overflow-hidden rounded-3xl border border-white/15 bg-slate-900/60 shadow-xl"
                 >
                   {!isImageLoaded(posPrimaryShowcase.src) ? (
@@ -865,6 +880,8 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setPosModalView("legacyImage")}
+                      aria-haspopup="dialog"
+                      aria-controls="pos-modal"
                       className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-cyan-300/20"
                     >
                       <Eye className="h-4 w-4" />
@@ -875,6 +892,8 @@ export default function HomePage() {
                     <button
                       type="button"
                       onClick={() => setPosModalView("mobileImage")}
+                      aria-haspopup="dialog"
+                      aria-controls="pos-modal"
                       className="inline-flex min-h-11 touch-manipulation items-center justify-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition active:scale-[0.98] hover:-translate-y-0.5 hover:bg-cyan-300/20"
                     >
                       <Eye className="h-4 w-4" />
@@ -1394,7 +1413,12 @@ export default function HomePage() {
         </section>
       </main>
       {isPosModalOpen ? (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6">
+        <div
+          id="pos-modal"
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-[120] flex items-center justify-center px-4 py-6"
+        >
           <button
             type="button"
             aria-label={posCloseLabel}
@@ -1455,9 +1479,9 @@ export default function HomePage() {
                 <p className="mt-1 text-sm font-semibold text-cyan-200">{posCopy.ctaFree}</p>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
                   <a
-                    href="http://sstinnovate.com"
+                    href="https://sstinnovate.com"
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex min-h-11 items-center gap-2 rounded-full border border-cyan-200/40 bg-cyan-300/10 px-5 py-2 text-sm font-semibold text-cyan-100 transition hover:-translate-y-0.5 hover:bg-cyan-300/20"
                   >
                     {posTryButtonText}
