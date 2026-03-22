@@ -51,6 +51,23 @@ export default function ContactPageClient() {
       ? "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
       : "inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400";
   const submitModalVariant = submitModal.open ? submitModal.variant : null;
+  const getNotificationWarning = (notifications: {
+    email?: "sent" | "skipped" | "failed";
+    line?: "sent" | "skipped" | "failed";
+  } | null) => {
+    if (!notifications) return null;
+    const issues: string[] = [];
+    if (notifications.email && notifications.email !== "sent") {
+      issues.push(`Email: ${notifications.email}`);
+    }
+    if (notifications.line && notifications.line !== "sent") {
+      issues.push(`LINE: ${notifications.line}`);
+    }
+    if (!issues.length) return null;
+    return lang === "th"
+      ? `หมายเหตุ: การแจ้งเตือนบางช่องทางยังไม่สำเร็จ (${issues.join(", ")})`
+      : `Note: some notifications were not delivered (${issues.join(", ")})`;
+  };
   const setStartedAtIfMissing = () => {
     setFormData((prev) => (prev.startedAt ? prev : { ...prev, startedAt: Date.now() }));
   };
@@ -90,6 +107,7 @@ export default function ContactPageClient() {
         setDebugRequestId(data?.requestId ?? null);
         throw new Error(err);
       }
+      const notificationWarning = getNotificationWarning(data?.notifications ?? null);
 
       setStatus("success");
       setLeadRef(formatLeadRef(data?.leadId ?? null));
@@ -103,7 +121,9 @@ export default function ContactPageClient() {
             : lang === "lo"
               ? "ສົ່ງສຳເລັດ"
               : "Sent successfully",
-        message: copy.contact.success,
+        message: notificationWarning
+          ? `${copy.contact.success}\n${notificationWarning}`
+          : copy.contact.success,
       });
 
       setFormData({

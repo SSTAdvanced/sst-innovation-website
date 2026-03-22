@@ -162,6 +162,7 @@ export default function EstimateClient({
     "idle"
   );
   const [leadError, setLeadError] = useState<string | null>(null);
+  const [leadNotice, setLeadNotice] = useState<string | null>(null);
   const [leadRef, setLeadRef] = useState<string | null>(null);
   const [leadStartedAt, setLeadStartedAt] = useState<number | null>(null);
   const [leadFormOpen, setLeadFormOpen] = useState(false);
@@ -193,6 +194,24 @@ export default function EstimateClient({
     setHasStarted(true);
     trackGaEvent("estimate_start", { service });
     logEvent({ eventName: "estimate_start", service });
+  };
+
+  const getNotificationWarning = (notifications: {
+    email?: "sent" | "skipped" | "failed";
+    line?: "sent" | "skipped" | "failed";
+  } | null) => {
+    if (!notifications) return null;
+    const issues: string[] = [];
+    if (notifications.email && notifications.email !== "sent") {
+      issues.push(`Email: ${notifications.email}`);
+    }
+    if (notifications.line && notifications.line !== "sent") {
+      issues.push(`LINE: ${notifications.line}`);
+    }
+    if (!issues.length) return null;
+    return locale === "th"
+      ? `หมายเหตุ: การแจ้งเตือนบางช่องทางยังไม่สำเร็จ (${issues.join(", ")})`
+      : `Note: some notifications were not delivered (${issues.join(", ")})`;
   };
 
   const onServiceChange = (value: EstimatorService) => {
@@ -287,6 +306,7 @@ export default function EstimateClient({
     setLeadFormOpen(false);
     setLeadStatus("loading");
     setLeadError(null);
+    setLeadNotice(null);
     setLeadRef(null);
 
     const controller = new AbortController();
@@ -317,7 +337,9 @@ export default function EstimateClient({
         );
       }
 
+      const notificationWarning = getNotificationWarning(data?.notifications ?? null);
       setLeadRef(formatLeadRef(data?.leadId ?? null));
+      setLeadNotice(notificationWarning);
       // Reset lead fields immediately after a successful submission.
       setLeadForm({ name: "", phone: "", email: "", message: "", company: "" });
       setLeadStartedAt(null);
@@ -353,6 +375,10 @@ export default function EstimateClient({
   const primaryButton = locale === "th" ? "คำนวณราคา" : "Calculate estimate";
   const leadButton = locale === "th" ? "ส่งใบเสนอราคา" : "Send quotation";
   const resultLabel = locale === "th" ? "ช่วงราคาโดยประมาณ" : "Estimated range";
+  const leadSuccessMessage =
+    locale === "th"
+      ? "เราได้รับข้อมูลแล้ว ทีมงานจะติดต่อกลับโดยเร็วที่สุด"
+      : "We received your details. We'll contact you soon.";
 
   const quoteDate = useMemo(() => {
     const now = new Date();
@@ -1158,9 +1184,7 @@ export default function EstimateClient({
                 ? "กรุณารอสักครู่..."
                 : "Please wait..."
               : leadStatus === "success"
-                ? locale === "th"
-                  ? "เราได้รับข้อมูลแล้ว ทีมงานจะติดต่อกลับโดยเร็วที่สุด"
-                  : "We received your details. We'll contact you soon."
+                ? `${leadSuccessMessage}${leadNotice ? `\n${leadNotice}` : ""}`
                 : leadError ?? undefined
           }
           reference={leadStatus === "success" ? leadRef : null}
@@ -1175,6 +1199,7 @@ export default function EstimateClient({
             }
             setLeadStatus("idle");
             setLeadError(null);
+            setLeadNotice(null);
             setLeadRef(null);
           }}
         />
